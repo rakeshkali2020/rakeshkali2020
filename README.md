@@ -4,7 +4,7 @@
 
 #### I'm 
 
-# Online Profiles:
+# Social Handles to stay Connected:
 #### LinkedIn: https://www.linkedin.com/in/rakesh-kumar-singh-3256b920b/
 #### YouTube Channel (Motion Street): https://www.youtube.com/channel/UCN2VcHt9JkIMLT31vtuZukg
 #### Motion Street Website: https://motionstreet.thinkingtales.com
