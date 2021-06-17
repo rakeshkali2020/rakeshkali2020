@@ -1,8 +1,8 @@
-# Hi there 👋
+# Hi there and Welcome to my Github Profile👋
 
 ## I am Rakesh Singh
 
-#### I'm 
+#### I really hate bios, so let's keep it short. I am quite curious about learning and exploring new things I am passionate about. 'Consume Less and Create More' is the only principle that drives my curiosity. 
 
 # Social Handles to stay Connected:
 #### LinkedIn: https://www.linkedin.com/in/rakesh-kumar-singh-3256b920b/
