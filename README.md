@@ -11,7 +11,18 @@
 <p> Facebook: https://www.facebook.com/iamrakesh97/</p>
 <p> The Blog: https://thinkingtales.com/</p>
 
-<img src ="https://github.com/abhisheknaiidu/abhisheknaiidu/raw/master/code.gif?raw=true" width="50%">
+<hr>
+
+<p><strong>Languages and Tools I know</strong></p>
+
+<p>
+  <code>
+<a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/python/python.png"><img height="40" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/python/python.png" style="max-width:100%;"></a>
+  </code>
+ </p>
+  
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/abhisheknaiidu/abhisheknaiidu/blob/master/code.gif?raw=true"><img align="right" alt="GIF" src="https://github.com/abhisheknaiidu/abhisheknaiidu/raw/master/code.gif?raw=true" width="500" height="320" style="max-width:100%;"></a>
+   
 
 
 <!--
