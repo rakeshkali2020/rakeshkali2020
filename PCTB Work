@@ -8,3 +8,25 @@ STEP-2:Create tables for new BU
 	- run all the related scripts for d_country till staging
 STEP-3:Create mapping view
 	- create a new view which has 6 columns(4 from Aditi's file, country_id from Archana's file and a new join key which would be combination of country_id+brand_desc
+
+Script in a Notebook looks like this:
+%sql
+drop table if exists edap_raw.pfr_landing_d_country_inc_customer_extract_2;
+
+CREATE  TABLE edap_raw.pfr_landing_d_country_inc_customer_extract_2
+(
+d_country_id string,
+country_id string,
+area string,
+market string,
+region string,
+country string,
+Country_Attribute_1 string, -- Added as part of CHG0049647 5thJuly 2021
+Country_Attribute_2 string, -- Added as part of CHG0049647 5thJuly 2021
+Country_Attribute_3 string, -- Added as part of CHG0049647 5thJuly 2021
+Country_Attribute_4 string, -- Added as part of CHG0049647 5thJuly 2021
+Country_Attribute_5 string  -- Added as part of CHG0049647 5thJuly 2021
+)
+using csv
+OPTIONS (path "abfss://adlsedapproddatahubst@saedapproddatahubst.dfs.core.windows.net/010_landing/pfr_weekly/country_extract/country_extract_2.csv", header "true", inferSchema "true"
+,quote "\"", sep ",", columnNameOfCorruptRecord 'ValidateErrorMessage',  mode 'PERMISSIVE');
