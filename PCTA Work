@@ -1,0 +1,13 @@
+Table (Business Segment) - Existing Table
+
+country_id	Country	Area	Region	Brand	Business Segment
+US	USA	North America	NAC	151	Reckitt Core
+US	USA	North America	NAC	Easy Off Bam	Essential Home
+US	USA	North America	NAC	141	Reckitt Core
+US	USA	North America	NAC	131	Reckitt Core
+US	USA	North America	NAC	161	Reckitt Core
+US	USA	North America	NAC	193	Reckitt Core
+US	USA	North America	NAC	103	Reckitt Core
+VN	Vietnam	Emerging Markets	ASEAN	3 in 1	Reckitt Core
+SG	Singapore	Emerging Markets	ASEAN	3 in 1	Reckitt Core
+GB	United Kingdom	Europe	N Europe and ANZ	3 in 1	Essential Home
