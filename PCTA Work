@@ -54,3 +54,28 @@ OPTIONS (path "abfss://adlsedapdevdatahubst@saedapdevsast.dfs.core.windows.net/0
 ,quote "\"", sep ",", columnNameOfCorruptRecord 'ValidateErrorMessage',  mode 'PERMISSIVE');
 
 
+
+%sql
+
+SELECT
+  snapshot_week,
+  edap_raw.ibp_leadership_view_sa_snapshot.brand,
+  brand_desc,
+  segment,
+  edap_goldplus.d_new_bu.`Business Segment`,
+  segment_desc,
+  line_of_business_description,
+  salesorg,
+  edap_raw.ibp_leadership_view_sa_snapshot.area,
+  edap_raw.ibp_leadership_view_sa_snapshot.region,
+  edap_raw.ibp_leadership_view_sa_snapshot.country,
+  Country_Attribute_1, -- Added as part of CHG0049647 5thJuly 2021
+  Country_Attribute_2, -- Added as part of CHG0049647 5thJuly 2021
+  Country_Attribute_3, -- Added as part of CHG0049647 5thJuly 2021
+  Country_Attribute_4, -- Added as part of CHG0049647 5thJuly 2021
+  month 
+FROM edap_raw.ibp_leadership_view_sa_snapshot 
+LEFT JOIN edap_goldplus.d_new_bu
+ON edap_raw.ibp_leadership_view_sa_snapshot.country = edap_goldplus.d_new_bu.Country AND 
+edap_raw.ibp_leadership_view_sa_snapshot.brand = edap_goldplus.d_new_bu.Brand
+
