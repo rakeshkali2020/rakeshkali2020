@@ -27,4 +27,30 @@ snapshot_week
 2024-12-01
 2024-01-06
 
+%sql
+drop table if exists edap_raw.ibp_leadership_view_sa_snapshot;
+
+CREATE TABLE edap_raw.ibp_leadership_view_sa_snapshot
+(
+snapshot_week string,
+brand string,
+brand_desc string,
+segment string,
+segment_desc string,
+line_of_business_description string,
+salesorg string,
+area string,
+region string,
+country string,
+Country_Attribute_1 string, -- Added as part of CHG0049647 5thJuly 2021
+Country_Attribute_2 string, -- Added as part of CHG0049647 5thJuly 2021
+Country_Attribute_3 string, -- Added as part of CHG0049647 5thJuly 2021
+Country_Attribute_4 string, -- Added as part of CHG0049647 5thJuly 2021
+month string
+)
+
+using csv
+OPTIONS (path "abfss://adlsedapdevdatahubst@saedapdevsast.dfs.core.windows.net/010_landing/leadership_view_manual_files/pcta_leadership_edap_sa_vw.csv", header "true", inferSchema "true"
+,quote "\"", sep ",", columnNameOfCorruptRecord 'ValidateErrorMessage',  mode 'PERMISSIVE');
+
 
