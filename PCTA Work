@@ -120,55 +120,24 @@ snapshot_week	brand	brand_desc	segment	segment_desc	line_of_business_description
 
 
 
--- Modify edap_sa.vw_fa_monthly_snapshot_brand_seg_sorg_fct
-CREATE OR REPLACE VIEW edap_sa.vw_fa_monthly_snapshot_brand_seg_sorg_fct AS
+CREATE OR REPLACE VIEW edap_goldplus.vw_ibp_leadership_with_bu AS
 SELECT 
-    snapshot_week,
-    brand,
-    brand_desc,
-    segment,
-    segment_desc,
-    line_of_business_description,
-    salesorg,
-    area,
-    region,
-    country,
-    Country_Attribute_1,
-    Country_Attribute_2,
-    Country_Attribute_3,
-    Country_Attribute_4,
-    month,
-    COALESCE(bu.business_segment, 'Unknown') AS business_segment
+    sa.snapshot_week,
+    sa.brand,
+    sa.brand_desc,
+    sa.segment,
+    sa.segment_desc,
+    sa.line_of_business_description,
+    sa.salesorg,
+    sa.area,
+    sa.region,
+    sa.country,
+    bu.business_segment
 FROM 
-    edap_transform.fa_monthly_snapshot_brand_seg_sorg_fct fact
+    edap_raw.ibp_leadership_view_sa_snapshot sa
 LEFT JOIN 
     edap_goldplus.d_new_bu bu
 ON 
-    fact.country = bu.country AND fact.brand = bu.brand;
+    sa.country = bu.Country AND sa.brand_desc = bu.Brand;
 
--- Modify edap_goldplus.vw_fa_monthly_snapshot_brand_seg_sorg_fct
-CREATE OR REPLACE VIEW edap_goldplus.vw_fa_monthly_snapshot_brand_seg_sorg_fct AS
-SELECT 
-    snapshot_week,
-    brand,
-    brand_desc,
-    segment,
-    segment_desc,
-    line_of_business_description,
-    salesorg,
-    area,
-    region,
-    country,
-    Country_Attribute_1,
-    Country_Attribute_2,
-    Country_Attribute_3,
-    Country_Attribute_4,
-    month,
-    COALESCE(bu.business_segment, 'Unknown') AS business_segment
-FROM 
-    edap_transform.fa_monthly_snapshot_brand_seg_sorg_fct fact
-LEFT JOIN 
-    edap_goldplus.d_new_bu bu
-ON 
-    fact.country = bu.country AND fact.brand = bu.brand;
 
