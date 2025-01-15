@@ -119,8 +119,6 @@ snapshot_week	brand	brand_desc	segment	segment_desc	line_of_business_description
 2025-01-06	1295	Durex	I3	Massage Lubes	Health	03861	ASEAN	Korea	Korea	Korea	Korea	South East Asia	South East Asia	ASEAN
 
 
-
-CREATE OR REPLACE VIEW edap_goldplus.vw_ibp_leadership_with_bu AS
 SELECT 
     sa.snapshot_week,
     sa.brand,
@@ -138,6 +136,8 @@ FROM
 LEFT JOIN 
     edap_goldplus.d_new_bu bu
 ON 
+    sa.country = bu.Country AND sa.brand_desc = bu.Brand;
+
     sa.country = bu.Country AND sa.brand_desc = bu.Brand;
 
 
