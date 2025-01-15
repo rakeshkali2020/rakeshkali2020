@@ -106,3 +106,58 @@ snapshot_week	brand	brand_desc	segment	segment_desc	line_of_business_description
 2025-01-06	1902	Vanish	KW	Powder - IW	Hygiene & Home	03861	ASEAN	Korea	Korea	Korea	Korea	South East Asia	South East Asia	ASEAN
 2025-01-06	1902	Vanish	YG	Powder Std - IW	Hygiene & Home	03861	ASEAN	Korea	Korea	Korea	Korea	South East Asia	South East Asia	ASEAN
 2025-01-06	1295	Durex	I3	Massage Lubes	Health	03861	ASEAN	Korea	Korea	Korea	Korea	South East Asia	South East Asia	ASEAN
+
+
+
+-- Modify edap_sa.vw_fa_monthly_snapshot_brand_seg_sorg_fct
+CREATE OR REPLACE VIEW edap_sa.vw_fa_monthly_snapshot_brand_seg_sorg_fct AS
+SELECT 
+    snapshot_week,
+    brand,
+    brand_desc,
+    segment,
+    segment_desc,
+    line_of_business_description,
+    salesorg,
+    area,
+    region,
+    country,
+    Country_Attribute_1,
+    Country_Attribute_2,
+    Country_Attribute_3,
+    Country_Attribute_4,
+    month,
+    COALESCE(bu.business_segment, 'Unknown') AS business_segment
+FROM 
+    edap_transform.fa_monthly_snapshot_brand_seg_sorg_fct fact
+LEFT JOIN 
+    edap_goldplus.d_new_bu bu
+ON 
+    fact.country = bu.country AND fact.brand = bu.brand;
+
+-- Modify edap_goldplus.vw_fa_monthly_snapshot_brand_seg_sorg_fct
+CREATE OR REPLACE VIEW edap_goldplus.vw_fa_monthly_snapshot_brand_seg_sorg_fct AS
+SELECT 
+    snapshot_week,
+    brand,
+    brand_desc,
+    segment,
+    segment_desc,
+    line_of_business_description,
+    salesorg,
+    area,
+    region,
+    country,
+    Country_Attribute_1,
+    Country_Attribute_2,
+    Country_Attribute_3,
+    Country_Attribute_4,
+    month,
+    COALESCE(bu.business_segment, 'Unknown') AS business_segment
+FROM 
+    edap_transform.fa_monthly_snapshot_brand_seg_sorg_fct fact
+LEFT JOIN 
+    edap_goldplus.d_new_bu bu
+ON 
+    fact.country = bu.country AND fact.brand = bu.brand;
+
