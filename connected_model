@@ -1,1 +1,51 @@
-
+Product_Sku_Code	Product_Sku_Desc	Segment_Description	business_unit	BRAND_NAME	Attribute5	Segment_Code	Brand_Code	Product_Form	Attribute2	Attribute3
+0003794	FIL,AWICK,SPHERELINEN&COTTON	Basic Liquids (Air Care)	Hygiene & Home	Airwick	Basic Liquids (Air Care)	5D	1039	null	Airwick	Airwick
+0007420	FIL,SOLE,NERO VIVO	Dark (GC)	Hygiene & Home	Sole	Dark (GC)	1V	1807	null	Sole	Sole
+0008649	LIQUITINT ORANGE LG	Not Applicable	Hygiene & Home	Not Applicable	Not Applicable	NA	1571	null	Not Applicable	Not Applicable
+0010609	COBRA ACTIVE M/FRSH 2X6X750ML	MPC Non-Dis Others	Hygiene & Home	Cobra MPC	MPC Non-Dis Others	SQ	1992	LIR	Cobra MPC	Cobra MPC
+0011235	MENTHOL FLAVOUR 550469TP0300	null	Health	Lemsip	null	null	1491	null	Lemsip	Lemsip
+0011897	DSPCV,ZA,CARDIOCARE 30'S	Aspirin - Cardiovascular	Health	Disprin Cv	Aspirin - Cardiovascular	PI	1289	TAR	Disprin Cv	Disprin Cv
+0013929	CALCIUM CARBONATE DC	null	Health	Gaviscon	null	null	1392	null	Gaviscon	Gaviscon
+0017217	FINSH,DE,SALT 10KG (5X2KG)	Professional Range (1-5 mins)	Hygiene & Home	Finish	Professional Range (1-5 mins)	60	1337	POR	Finish	Finish
+0022300	BOTL,VEJA,BR,PERFUMES NATUREZA	Surface Liquid Disinfectants	Hygiene & Home	Veja	Surface Liquid Disinfectants	DF	1916	null	Veja	Veja
+0027441	LABL,GAVIS,GB,600ML,ADV PEP	Not Applicable	Health	Gaviscon	Not Applicable	NA	1392	null	Gaviscon	Gaviscon
+0031692	FIL,FINSH,PD,PRED,OXB,LAT,LEM	Powders - Reg&Con	Hygiene & Home	Finish	Powders - Reg&Con	29	1337	null	Finish	Finish
+0042624	CLOS,NA,NN,PP RED 30ML DOSE	Not Applicable	Hygiene & Home	Not Applicable	Not Applicable	NA	1571	null	Not Applicable	Not Applicable
+0052827	RLAB,AWICK,BR,AW LAV PR 500ML	Base Aerosols (Air Care)	Hygiene & Home	Airwick	Base Aerosols (Air Care)	62	1039	null	Airwick	Airwick
+0056350	FIL,HARPC,JUPITER WHITY PIN	Basic Blocks	Hygiene & Home	Harpic	Basic Blocks	F1	1413	null	Harpic	Harpic
+0060009	ASS,DETOL,DIRECT 1L CLER	Not Applicable	Health	Dettol	Not Applicable	NA	1292	null	Dettol	Dettol
+00601061	SYN,GB,CAPLET20X1	Other Adult Systemics	Health	Syndol	Other Adult Systemics	CP	1857	TAR	Syndol	Syndol
+0062771	BONJE,AZ,TEETH,GEL 15G GROCERY	Mouth pain	Health	Bonjela	Mouth pain	JM	1139	GEL	Bonjela	Bonjela
+0065669	TRAY,LEMSP,AZ,VLEAR,6X10	Not Applicable	Health	Lemsip	Not Applicable	NA	1491	null	Lemsip	Lemsip
+0066654P	VANISH CRYSTAL WHITES 400G$	White Pwd - IW	Hygiene & Home	Vanish	White Pwd - IW	66	1902	POC	Vanish	Vanish
+0071393	AUSTRALAVENDER EN119314	null	Hygiene & Home	Not Applicable	null	null	1571	null	Not Applicable	Not Applicable
+0073787	HARPIC LINGETTES DESINFECT X40	Others Lav Non Dis	Hygiene & Home	Harpic	Others Lav Non Dis	FD	1413	WIP	Harpic	Harpic
+0076900	FINSH,NL,DESODO CITFR	MACHINE FRESHENERS (ADW)	Hygiene	Finish	Machine Fresheners (ADW)	RG	1337	null	Finish	Finish
+0078429	AWICK,MY,ODSTOP MORN RAIN300ML	Base Aerosols (Air Care)	Hygiene & Home	Airwick	Base Aerosols (Air Care)	62	1039	AAB	Airwick	Airwick
+0079861	MISC,40MM,HT-FL BLK,HSBLK1	Not Applicable	Hygiene & Home	Not Applicable	Not Applicable	NA	1571	null	Not Applicable	Not Applicable
+0082119	CASE,MORTN,BR,MOS Y ZAN 12X400	Aerosols (FIK)	Hygiene & Home	Mortein	Aerosols (FIK)	NK	1559	null	Mortein	Mortein
+0082888	PWCLN,KR,LDMW 4.5KG DB,1X3	Powder	Hygiene & Home	Powerclean	Powder	2T	1687	POR	Powerclean	Powerclean
+008481	HARPC,NZ,FOAM BLUE BLK TWN 114	ITC	Hygiene & Home	Harpic	ITC	OK	1413	AAE	Harpic	Harpic
+008538	BLACK FLAG LEMON 350G	AEROSOLS (FIK)	Hygiene	Black Flag	null	NK	null	null	Black Flag	Black Flag
+0087269	LYSOL,CA,LSW CTRS 6/70CT	SURFACE DISINFECTION WIPES	Hygiene	Lysol/Lizol	Surface Disinfection Wipes	T4	1510	null	Lysol	Lysol
+0091697	FIL,INSSP,TRILBY SS	Fabric Softener Concentrate	Hygiene & Home	Institutional Sales Spain	Fabric Softener Concentrate	LX	1077	null	Institutional Sales Spain	Institutional Sales Spain
+0093309	CLEANING R06-1658	Not Applicable	Hygiene & Home	Lysol/Lizol	Not Applicable	NA	1510	null	Lysol/Lizol	Lysol/Lizol
+0094751	AWICK,KR,A/S SLIM GAD+LV/REF,6	Freshmtc Compact Complete Base	Hygiene & Home	Airwick	Freshmtc Compact Complete Base	1J	1039	AAB	Airwick	Airwick
+0098629*OP1	null	null	null	null	null	null	null	null	Not Available	Not Available
+0101375	NENUC,ES,COLONIA,12X200ML	Baby Care	Health	Nenuco	Baby Care	SM	1593	LIR	Nenuco	Nenuco
+0101415	VRAC,VEET,ZA,100ML,CAMILLEx8	Pre/Post Hair Removal	Health	Veet	Pre/Post Hair Removal	MZ	1907	null	Veet	Veet
+0102946	FINSH,IT,RA,LEMON,16 X 250ML	Rinse Aid (ADW)	Hygiene & Home	Finish	Rinse Aid (ADW)	MG	1337	LIR	Finish	Finish
+0105439	PERF LAVAND D´NEW BAX-47623	null	Hygiene & Home	Not Applicable	null	null	1571	null	Not Applicable	Not Applicable
+0110789	MORTEIN FASTKILL 400ML WITH NO	Aerosols (CIK)	Hygiene & Home	Mortein	Aerosols (CIK)	HB	1559	AAB	Mortein	Mortein
+0112099	INSSP,ES,TRILBY PLUS 20 KG	Liquid Baby	Hygiene & Home	Institutional Sales Spain	Liquid Baby	3Q	1077	LIC	Institutional Sales Spain	Institutional Sales Spain
+0112850	FIL,WLENE,VINEGAR	Glass Trigger	Hygiene & Home	Windolene	Glass Trigger	SI	1936	null	Windolene	Windolene
+011360	AWICK,MX,AER 4E1 PA&MA 12X226G	Base Aerosols (Air Care)	Hygiene & Home	Airwick	Base Aerosols (Air Care)	62	1039	AAB	Airwick	Airwick
+0114256	GAVIS,GB,LIQ,PEP,6X150ML	Core Liquid Bottles	Health	Gaviscon	Core Liquid Bottles	E1	1392	LIR	Gaviscon	Gaviscon
+01163999C	MICTN,MX,TAB 100,000U 30EA	Skincare other New Form	Health	Micostatin V	Skincare other New Form	KC	1980	TAR	Micostatin V	Micostatin V
+0121724	FIL,EOFOF,BANG POD LIMP SAR SU	Lime & Rust	Hygiene & Home	Easy Off	Lime & Rust	2B	1313	null	Easy Off	Easy Off
+0122624	CASE,LEMSP,AZ,MAX,6X6X10'S	Not Applicable	Health	Lemsip	Not Applicable	NA	1491	null	Lemsip	Lemsip
+0123319	AIRWICK FM CINAM&SP 6X250ML	Freshmatic Base Refills	Hygiene & Home	Airwick	Freshmatic Base Refills	9C	1039	DUS	Airwick	Airwick
+0123533	RLAB,DSTAC,BR,FOLH OUTONO 750	Wood&MultiSurf Triggers (Furn)	Hygiene & Home	Destac	Wood&MultiSurf Triggers (Furn)	95	1279	null	Destac	Destac
+012476	BMPC,MX,MZA&CANEL 900ML WM	Fragrance Range	Hygiene & Home	Brasso MPC	Fragrance Range	R2	1991	LIC	Brasso MPC	Brasso MPC
+0125913	FOIL,SENKT,BE,TAB	Not Applicable	Health	Senokot	Not Applicable	NA	1801	null	Senokot	Senokot
+0126746_SFG	FIL,SENKT,TABLETS 12X12X20'S	Anti-constipation Solid Dose	Health	Senokot	Anti-constipation Solid Dose	55	1801	null	Senokot	Senokot
