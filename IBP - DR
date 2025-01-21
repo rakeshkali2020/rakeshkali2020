@@ -172,3 +172,15 @@ MY	Malaysia	Nutrition	Nutrition	Enfa Total Grow	MJN Nutrition
 FI	Nordics	Nutrition	Nutrition	Enfamil	MJN Nutrition
 SG	Singapore	Emerging Markets	ASEAN	Florient	Reckitt Core
 
+
+
+SELECT 
+    p.*,  -- Select all columns from sa_product_dim
+    l.country  -- Add the country column from sa_location_dim
+FROM 
+    edap_goldplus.sa_product_dim p
+LEFT JOIN 
+    edap_sa.sa_location_dim l
+ON 
+    p.site = l.location;
+
