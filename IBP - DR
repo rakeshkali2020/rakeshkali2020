@@ -174,13 +174,19 @@ SG	Singapore	Emerging Markets	ASEAN	Florient	Reckitt Core
 
 
 
+%sql
 SELECT 
-    p.*,  -- Select all columns from sa_product_dim
-    l.country  -- Add the country column from sa_location_dim
+    p.product_id,p.product_desc,p.product,p.site,p.product_form,p.product_form_desc,p.brand_short_code,p.brand,p.brand_desc,p.segment,p.segment_desc,p.business_unit,p.line_of_business_description,p.category_desc,p.prod_agg_key,p.npd_code,p.ean_code,p.GTIN,p.PG1,p.PG2,p.PG3,p.business_unit_new,p.power_brand, 
+    l.country 
 FROM 
     edap_goldplus.sa_product_dim p
 LEFT JOIN 
     edap_sa.sa_location_dim l
 ON 
-    p.site = l.location;
+    p.site = l.location LIMIT 10;
+
+
+Now I want to join the above SQL Query with this table (edap_goldplus.d_new_bu) on the basis of country_id.edap_goldplus.d_new_bu
+and country column available in the available in the above query. You might just have to perform a more join taking this table (edap_goldplus.d_new_bu) and bring the business_segment into resulting table.
+
 
