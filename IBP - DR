@@ -189,4 +189,6 @@ ON
 Now I want to join the above SQL Query with this table (edap_goldplus.d_new_bu) on the basis of country_id.edap_goldplus.d_new_bu
 and country column available in the available in the above query. You might just have to perform a more join taking this table (edap_goldplus.d_new_bu) and bring the business_segment into resulting table.
 
-
+product_id	product_desc	product	site	product_form	product_form_desc	brand_short_code	brand	country	Country	Business Segment	brand_desc	segment	segment_desc	business_unit	line_of_business_description	category_desc	prod_agg_key	npd_code	ean_code	GTIN	PG1	PG2	PG3	business_unit_new	power_brand
+MDA0MDAxMjg5MzQ5MDM0OTQw	DERBAC M 50ML X 12	00400128	9349034940	LIR	liquid Regular	DEB	1242	AE	null	null	Derbac M	HV	Head Lice	HEA	Health	HEALTHCARE - OTHER	1242HV	null	null	null	null	null	null	Health	NA
+MDA0MDAxMjg5ODA0MDI5NDAx	Derbac-M Liquid 50ml	00400128	9804029401	LIR	liquid Regular	DEB	1242	NZ	null	null	Derbac M	HV	Head Lice	HEA	Health	HEALTHCARE - OTHER	1242HV	null	null	null	null	null	null	Health	NA
