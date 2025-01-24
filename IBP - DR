@@ -192,3 +192,47 @@ and country column available in the available in the above query. You might just
 product_id	product_desc	product	site	product_form	product_form_desc	brand_short_code	brand	country	Country	Business Segment	brand_desc	segment	segment_desc	business_unit	line_of_business_description	category_desc	prod_agg_key	npd_code	ean_code	GTIN	PG1	PG2	PG3	business_unit_new	power_brand
 MDA0MDAxMjg5MzQ5MDM0OTQw	DERBAC M 50ML X 12	00400128	9349034940	LIR	liquid Regular	DEB	1242	AE	null	null	Derbac M	HV	Head Lice	HEA	Health	HEALTHCARE - OTHER	1242HV	null	null	null	null	null	null	Health	NA
 MDA0MDAxMjg5ODA0MDI5NDAx	Derbac-M Liquid 50ml	00400128	9804029401	LIR	liquid Regular	DEB	1242	NZ	null	null	Derbac M	HV	Head Lice	HEA	Health	HEALTHCARE - OTHER	1242HV	null	null	null	null	null	null	Health	NA
+
+
+%sql
+SELECT
+    p.product_id,
+    p.product_desc,
+    p.product,
+    p.site,
+    p.product_form,
+    p.product_form_desc,
+    p.brand_short_code,
+    p.brand,
+    l.country,
+    b.`Business Segment`,
+    p.brand_desc,
+    p.segment,
+    p.segment_desc,
+    p.business_unit,
+    p.line_of_business_description,
+    p.category_desc,
+    p.prod_agg_key,
+    p.npd_code,
+    p.ean_code,
+    p.GTIN,
+    p.PG1,
+    p.PG2,
+    p.PG3,
+    p.business_unit_new,
+    p.power_brand
+FROM
+    edap_goldplus.sa_product_dim p
+LEFT JOIN
+    edap_sa.sa_location_dim l
+ON
+    p.site = l.location
+LEFT JOIN
+    edap_goldplus.d_new_bu b
+ON
+    UPPER(l.country) = UPPER(b.country_id) AND UPPER(p.brand_desc) = UPPER(b.Brand)
+WHERE 
+    l.location_type = 'DC';
+
+%sql
+select distinct product_id,product_desc,product,site,product_form,product_form_desc,brand_short_code,brand,brand_desc,segment,segment_desc,business_unit,line_of_business_description,category_desc,prod_agg_key,npd_code,ean_code,GTIN,PG1,PG2,PG3,business_unit_new,power_brand from edap_goldplus.sa_product_dim LIMIT 50
