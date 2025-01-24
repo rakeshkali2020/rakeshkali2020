@@ -236,3 +236,54 @@ WHERE
 
 df=spark.sql("""select distinct product_id,product_desc,product,site,product_form,product_form_desc,brand_short_code,brand,brand_desc,segment,segment_desc,business_unit,line_of_business_description,category_desc,prod_agg_key,npd_code,ean_code,GTIN,PG1,PG2,PG3,business_unit_new,power_brand from edap_goldplus.sa_product_dim""")
 df.coalesce(1).write.format("csv").option("header", "true").option("sep", ";").mode("overwrite").save("abfss://{0}@{1}.dfs.core.windows.net/csv_for_aas/sa_product_dim".format(gpContainer,gpStorageAccount))
+# Execute the SQL query in PySpark and fetch the distinct results
+df = spark.sql("""
+    SELECT DISTINCT
+        p.product_id,
+        p.product_desc,
+        p.product,
+        p.site,
+        p.product_form,
+        p.product_form_desc,
+        p.brand_short_code,
+        p.brand,
+        l.country,
+        b.`Business Segment`,
+        p.brand_desc,
+        p.segment,
+        p.segment_desc,
+        p.business_unit,
+        p.line_of_business_description,
+        p.category_desc,
+        p.prod_agg_key,
+        p.npd_code,
+        p.ean_code,
+        p.GTIN,
+        p.PG1,
+        p.PG2,
+        p.PG3,
+        p.business_unit_new,
+        p.power_brand
+    FROM
+        edap_goldplus.sa_product_dim p
+    LEFT JOIN
+        edap_sa.sa_location_dim l
+    ON
+        p.site = l.location
+    LEFT JOIN
+        edap_goldplus.d_new_bu b
+    ON
+        UPPER(l.country) = UPPER(b.country_id) 
+        AND UPPER(p.brand_desc) = UPPER(b.Brand)
+    WHERE 
+        l.location_type = 'DC'
+""")
+
+# Save the resulting DataFrame as a CSV file to Azure Data Lake Storage
+df.coalesce(1) \
+  .write.format("csv") \
+  .option("header", "true") \
+  .option("sep", ";") \
+  .mode("overwrite") \
+  .save("abfss://{0}@{1}.dfs.core.windows.net/csv_for_aas/sa_product_dim".format(gpContainer, gpStorageAccount))
+
