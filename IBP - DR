@@ -234,5 +234,5 @@ ON
 WHERE 
     l.location_type = 'DC';
 
-%sql
-select distinct product_id,product_desc,product,site,product_form,product_form_desc,brand_short_code,brand,brand_desc,segment,segment_desc,business_unit,line_of_business_description,category_desc,prod_agg_key,npd_code,ean_code,GTIN,PG1,PG2,PG3,business_unit_new,power_brand from edap_goldplus.sa_product_dim LIMIT 50
+df=spark.sql("""select distinct product_id,product_desc,product,site,product_form,product_form_desc,brand_short_code,brand,brand_desc,segment,segment_desc,business_unit,line_of_business_description,category_desc,prod_agg_key,npd_code,ean_code,GTIN,PG1,PG2,PG3,business_unit_new,power_brand from edap_goldplus.sa_product_dim""")
+df.coalesce(1).write.format("csv").option("header", "true").option("sep", ";").mode("overwrite").save("abfss://{0}@{1}.dfs.core.windows.net/csv_for_aas/sa_product_dim".format(gpContainer,gpStorageAccount))
