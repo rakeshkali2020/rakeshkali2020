@@ -302,3 +302,94 @@ FROM
     ON
         UPPER(l.country) = UPPER(b.country_id) 
         AND UPPER(p.brand_desc) = UPPER(b.Brand)
+
+
+
+
+
+Here is the modified code incorporating the subquery for the edap_sa.sa_location_dim table within the join condition:
+
+# Execute the SQL query in PySpark with a subquery in the join condition
+df = spark.sql("""
+    SELECT DISTINCT
+        p.product_id,
+        p.product_desc,
+        p.product,
+        p.site,
+        p.product_form,
+        p.product_form_desc,
+        p.brand_short_code,
+        p.brand,
+        l.country,
+        b.`Business Segment`,
+        p.brand_desc,
+        p.segment,
+        p.segment_desc,
+        p.business_unit,
+        p.line_of_business_description,
+        p.category_desc,
+        p.prod_agg_key,
+        p.npd_code,
+        p.ean_code,
+        p.GTIN,
+        p.PG1,
+        p.PG2,
+        p.PG3,
+        p.business_unit_new,
+        p.power_brand
+    FROM
+        edap_goldplus.sa_product_dim p
+    LEFT JOIN
+        (SELECT * FROM edap_sa.sa_location_dim WHERE location_type = 'DC') l
+    ON
+        p.site = l.location
+    LEFT JOIN
+        edap_goldplus.d_new_bu b
+    ON
+        UPPER(l.country) = UPPER(b.country_id) 
+        AND UPPER(p.brand_desc) = UPPER(b.Brand)
+""")
+
+# Save the resulting DataFrame as a CSV file to Azure Data Lake Storage
+df.coalesce(1) \
+  .write.format("csv") \
+  .option("header", "true") \
+  .option("sep", ";") \
+  .mode("overwrite") \
+  .save("abfss://{0}@{1}.dfs.core.windows.net/csv_for_aas/sa_product_dim".format(gpContainer, gpStorageAccount))
+
+Modifications:
+
+1. Subquery in the LEFT JOIN Condition:
+
+Instead of directly joining edap_sa.sa_location_dim, we filter it first (WHERE location_type = 'DC'), ensuring only relevant records are joined.
+
+This helps optimize performance by reducing unnecessary data before joining.
+
+
+
+2. No WHERE Clause at the End:
+
+The filtering condition for location_type = 'DC' is now inside the subquery, so the final WHERE clause is removed.
+
+
+
+3. Other Joins Remain the Same:
+
+The second LEFT JOIN with edap_goldplus.d_new_bu is still performed on UPPER(l.country) = UPPER(b.country_id) AND UPPER(p.brand_desc) = UPPER(b.Brand).
+
+
+
+
+Expected Benefits:
+
+Performance Optimization: The subquery reduces the number of rows before joining.
+
+Better Readability: The logic for filtering location_type = 'DC' is now part of the join rather than an external WHERE clause.
+
+Maintains Functionality: The query behavior remains unchanged, just more efficient.
+
+
+This ensures that only relevant sa_location_dim records are joined, improving efficiency while keeping the logic intact.
+
+
