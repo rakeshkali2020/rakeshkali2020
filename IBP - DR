@@ -287,3 +287,18 @@ df.coalesce(1) \
   .mode("overwrite") \
   .save("abfss://{0}@{1}.dfs.core.windows.net/csv_for_aas/sa_product_dim".format(gpContainer, gpStorageAccount))
 
+
+
+
+FROM
+        edap_goldplus.sa_product_dim p
+    LEFT JOIN
+        ( SELECT * FROM edap_sa.sa_location_dim l  WHERE 
+        l.location_type = 'DC') l
+    ON
+        p.site = l.location
+    LEFT JOIN
+        edap_goldplus.d_new_bu b
+    ON
+        UPPER(l.country) = UPPER(b.country_id) 
+        AND UPPER(p.brand_desc) = UPPER(b.Brand)
