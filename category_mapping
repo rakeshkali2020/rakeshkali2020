@@ -105,27 +105,10 @@ INNER JOIN edap_goldplus.d_new_bu b
 
 
 %sql
-CREATE OR REPLACE VIEW edap_goldplus.d_product AS 
-SELECT DISTINCT 
-    p.d_product_sku_code,
-    p.product_sku_code,
-    p.sku_description,
-    p.secondary_item_number,
-    p.brand_code,
-    p.brand_description,
-    p.segment,
-    b.Category AS category,  -- Using b.Category from d_new_bu
-    p.uom,
-    p.variant,
-    p.product_attribute_1
-FROM edap_transform.d_product_inc p
-INNER JOIN edap_goldplus.sa_product_dim sp
-    ON p.product_sku_code = sp.product_id
+SELECT 
+    b.Category
+FROM edap_goldplus.sa_product_dim p
 INNER JOIN edap_goldplus.sa_location_dim l
-    ON sp.site = l.location
+    ON p.site = l.location
 INNER JOIN edap_goldplus.d_new_bu b
-    ON l.country = b.country_id
-    AND sp.brand_desc = b.Brand;
-
-    AND p.brand_description = b.Brand;
-
+    ON l.country = b.country_id AND p.brand_desc = b.Brand LIMIT 100;
