@@ -153,11 +153,6 @@ SELECT
     pd.*,
     ld.country AS location_country,
     pd.brand_desc AS product_brand_desc,
-    nb.Country AS bu_country,
-    nb.Brand AS bu_brand,
-    nb.Area,
-    nb.Region,
-    nb.Business_Segment,
     nb.Category
 FROM 
     edap_goldplus.sa_product_dim pd
@@ -168,5 +163,4 @@ JOIN
     edap_goldplus.d_new_bu nb
     ON ld.country = nb.Country 
     AND pd.brand = nb.Brand;
-
 
