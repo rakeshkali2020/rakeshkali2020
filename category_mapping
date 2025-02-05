@@ -194,25 +194,24 @@ LEFT JOIN
 
 
 %sql
-SELECT 
-    pd.product_id,
-    pd.product_desc,
-    pd.product,
-    pd.site,
-    pd.brand,
-    ld.country,
-    pd.brand_desc,
-    nb.Category AS category, -- Replacing category column with nb.Category
-    pd.product_form,
-    pd.product_form_desc,
-    pd.category_desc
+CREATE OR REPLACE VIEW edap_goldplus.d_product AS 
+SELECT DISTINCT 
+    d_product_sku_code,
+    product_sku_code,
+    sku_description,
+    secondary_item_number,
+    brand_code,
+    brand_description,
+    segment,
+    nb.Category AS category, -- Including Category from d_new_bu table as category
+    uom,
+    variant,
+    product_attribute_1
 FROM 
-    edap_goldplus.sa_product_dim pd
+    edap_transform.d_product_inc dp
 LEFT JOIN 
     edap_goldplus.sa_location_dim ld
-    ON pd.site = ld.location
+    ON dp.product_sku_code = ld.location -- Assuming some join condition here
 LEFT JOIN 
     edap_goldplus.d_new_bu nb
-    ON ld.country = nb.Country AND pd.brand_desc = nb.Brand;
-
-
+    ON ld.country = nb.Country AND dp.brand_code = nb.Brand;
