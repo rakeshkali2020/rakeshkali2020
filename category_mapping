@@ -164,3 +164,31 @@ JOIN
     ON ld.country = nb.Country 
     AND pd.brand = nb.Brand;
 
+
+
+
+
+
+
+%sql
+SELECT 
+    pd.product_id,
+    pd.product_desc,
+    pd.product,
+    pd.site,
+    pd.brand,
+    ld.country,
+    pd.brand_desc,
+    nb.Category,
+    pd.product_form,
+    pd.product_form_desc,
+    pd.category_desc
+FROM 
+    edap_goldplus.sa_product_dim pd
+LEFT JOIN 
+    edap_goldplus.sa_location_dim ld
+    ON pd.site = ld.location
+LEFT JOIN 
+    edap_goldplus.d_new_bu nb
+    ON ld.country = nb.Country AND pd.brand_desc = nb.Brand;
+
