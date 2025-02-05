@@ -124,13 +124,15 @@ SELECT DISTINCT
     brand_code,
     brand_description,
     segment,
-    b.Category AS category,
+    (
+        SELECT b.Category 
+        FROM edap_goldplus.sa_location_dim l
+        INNER JOIN edap_goldplus.d_new_bu b
+            ON l.country = b.country_id AND p.brand_description = b.Brand
+        WHERE p.site = l.location
+        LIMIT 1
+    ) AS category,
     uom,
     variant,
     product_attribute_1
-FROM edap_transform.d_product_inc p
-INNER JOIN edap_goldplus.sa_location_dim l
-    ON p.site = l.location
-INNER JOIN edap_goldplus.d_new_bu b
-    ON l.country = b.country_id AND p.brand_description = b.Brand;
-
+FROM edap_transform.d_product_inc p;
