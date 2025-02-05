@@ -231,3 +231,32 @@ JOIN
 LEFT JOIN 
     edap_goldplus.d_new_bu n
     ON UPPER(l.country) = UPPER(n.Country) AND UPPER(p.brand_desc) = UPPER(n.Brand);
+
+
+
+%sql
+CREATE OR REPLACE VIEW edap_goldplus.d_product AS 
+SELECT DISTINCT 
+    dp.d_product_sku_code,
+    dp.product_sku_code,
+    dp.sku_description,
+    dp.secondary_item_number,
+    dp.brand_code,
+    dp.brand_description,
+    dp.segment,
+    nb.Category AS category,  -- Including Category from d_new_bu table as category
+    dp.uom,
+    dp.variant,
+    dp.product_attribute_1
+FROM 
+    edap_transform.d_product_inc dp
+JOIN 
+    edap_goldplus.sa_product_dim p
+    ON dp.product_sku_code = p.product_id  -- Adjusted join condition based on SKU codes
+JOIN 
+    edap_goldplus.sa_location_dim l
+    ON p.site = l.location  -- First join to get country and brand_desc
+LEFT JOIN 
+    edap_goldplus.d_new_bu nb
+    ON UPPER(l.country) = UPPER(nb.Country) AND UPPER(p.brand_desc) = UPPER(nb.Brand);  -- Second join for category
+
