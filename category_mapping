@@ -1,64 +1,62 @@
-Brand	Country	Brand Segment	Area	Region	Category
-Zip	Singapore	Reckitt Core	Emerging Markets	ASEAN	
-Zip	Vietnam	Reckitt Core	Emerging Markets	ASEAN	
-Zip	South Africa	Reckitt Core	Emerging Markets	Africa	
-Zebra	Argentina	Essential Home	Emerging Markets	LATAM	
-Zebra	Vietnam	Reckitt Core	Emerging Markets	ASEAN	
-Zebra	Singapore	Reckitt Core	Emerging Markets	ASEAN	
-Zebra	South Africa	Reckitt Core	Emerging Markets	Africa	
-Zebo	Singapore	Reckitt Core	Emerging Markets	ASEAN	
-Zebo	South Africa	Reckitt Core	Emerging Markets	Africa	
-Zebo	Vietnam	Reckitt Core	Emerging Markets	ASEAN	
-Zeb	Madagascar & Seychelles	Reckitt Core	Emerging Markets	Africa	
-Zeb	Vietnam	Reckitt Core	Emerging Markets	ASEAN	
-Zeb	South Africa	Reckitt Core	Emerging Markets	Africa	
-Zeb	South Africa	Reckitt Core	Emerging Markets	Africa	
-Zeb	Singapore	Reckitt Core	Emerging Markets	ASEAN	
-Zeb	Unknown (GEM)	Reckitt Core	Emerging Markets	Other	
-Zatak	South Africa	Reckitt Core	Emerging Markets	Africa	
-Zatak	Vietnam	Reckitt Core	Emerging Markets	ASEAN	
-Zatak	Singapore	Reckitt Core	Emerging Markets	ASEAN	
-Yes	Singapore	Reckitt Core	Emerging Markets	ASEAN	
-Yes	Vietnam	Reckitt Core	Emerging Markets	ASEAN	
-Yes	South Africa	Reckitt Core	Emerging Markets	Africa	
-Xeramance	South Africa	Reckitt Core	Emerging Markets	Africa	
-Xeramance	Singapore	Reckitt Core	Emerging Markets	ASEAN	
-Xeramance	Italy	Reckitt Core	Europe	South East Europe	
-Xeramance	Health BU HQ	Reckitt Core	Other	n/a	
-Xeramance	Portugal	Reckitt Core	Europe	West Europe	
-Xeramance	France	Reckitt Core	Europe	West Europe	
-Xeramance	Vietnam	Reckitt Core	Emerging Markets	ASEAN	
+%sql
+CREATE OR REPLACE VIEW edap_goldplus.d_product AS 
+SELECT DISTINCT 
+d_product_sku_code,
+product_sku_code,
+sku_description,
+secondary_item_number,
+brand_code,
+brand_description,
+segment,
+category,
+uom,
+variant,
+product_attribute_1 ,
+
+from edap_transform.d_product_inc
 
 
+Table: edap_goldplus.d_new_bu
+country_id	Country	Area	Region	Brand	Business Segment	Category	cn_br_key
+ZA	South Africa	Emerging Markets	Africa	3 in 1	Reckitt Core	Other	ZA3 in 1
+SG	Singapore	Emerging Markets	ASEAN	3 in 1	Reckitt Core	Other	SG3 in 1
+US	USA	North America	NAC	151	Reckitt Core	Other	US151
+US	USA	North America	NAC	161	Reckitt Core	Other	US161
+US	USA	North America	NAC	141	Reckitt Core	Other	US141
+CN	China	Emerging Markets	Greater China & North Asia	Abc	Reckitt Core	Household Care	CNAbc
+VN	Vietnam	Emerging Markets	ASEAN	3 in 1	Reckitt Core	Other	VN3 in 1
+US	USA	North America	NAC	131	Reckitt Core	Other	US131
+GB	United Kingdom	Europe	N Europe and ANZ	3 in 1	Essential Home	Cleaners	GB3 in 1
+US	USA	North America	NAC	103	Reckitt Core	Other	US103
+US	USA	North America	NAC	Easy Off Bam	Essential Home	Cleaners	USEasy Off Bam
+US	USA	North America	NAC	193	Reckitt Core	Other	US193
 
 
-Brand Country	Portfolio	Area	Region	Category
-103	USA	Rosemary	North America	NAC	Other
-131	USA	Rosemary	North America	NAC	Other
-141	USA	Rosemary	North America	NAC	Other
-151	USA	Rosemary	North America	NAC	Other
-161	USA	Rosemary	North America	NAC	Other
-193	USA	Rosemary	North America	NAC	Other
-3 in 1	United Kingdom	Hibiscus	Europe	N Europe and ANZ	Cleaners
-3 in 1	Central America	Hibiscus	Emerging Markets	LATAM	Cleaners
-3 in 1	Mexico	Hibiscus	Emerging Markets	LATAM	Cleaners
-3 in 1	Argentina	Hibiscus	Emerging Markets	LATAM	Cleaners
-3 in 1	Colombia	Hibiscus	Emerging Markets	LATAM	Cleaners
-Abc	Netherlands	Hibiscus	Europe	West Europe	Cleaners
-Abc	Poland	Hibiscus	Europe	East Europe	Cleaners
-Abc	Unknown (GEM)	Rosemary	Emerging Markets	South Asia	Household Care
-Abc	United Kingdom	Hibiscus	Europe	N Europe and ANZ	Cleaners
-Abc	Ireland	Hibiscus	Europe	N Europe and ANZ	Cleaners
-Abc	China	Rosemary	Emerging Markets	Greater China & North Asia	Household Care
-Abc	Costa Rica	Hibiscus	Emerging Markets	LATAM	Cleaners
-Abc	Ecuador	Hibiscus	Emerging Markets	LATAM	Cleaners
-Abc	Indonesia	Rosemary	Emerging Markets	ASEAN	Household Care
-Abc	Czech Republic	Hibiscus	Europe	East Europe	Cleaners
-Abc	Slovakia	Hibiscus	Europe	East Europe	Cleaners
-Acorvio	Indonesia	Magnolia	Nutrition	Nutrition	Nutrition
-Addlerox	Germany	Rosemary	Europe	Central Europe	Self-Care
-Addlerox	Indonesia	Rosemary	Emerging Markets	ASEAN	Self-Care
-Adulfen	Indonesia	Rosemary	Emerging Markets	ASEAN	Self-Care
-Aerogard	Other HQ	Rosemary	Other	n/a	Household Care
-Aerogard	Australia	Hibiscus	Europe	N Europe and ANZ	Pest
-Aerogard	New Zealand	Hibiscus	Europe	N Europe and ANZ	Pest
+Table: edap_goldplus.sa_product_dim
+product_id	product_desc	product	site	product_form	product_form_desc	ean_code	GTIN	PG1	PG2	PG3	brand_short_code	brand	brand_desc	brand_category	segment	segment_desc	business_unit	line_of_business_description	category_desc	prod_agg_key
+MDA0MDAxMjg5MzQ5MDM0OTQw	DERBAC M 50ML X 12	00400128	9349034940	LIR	liquid Regular	null	null	null	null	null	DEB	1242	Derbac M	Others	HV	Head Lice	HEA	Health	HEALTHCARE - OTHER	1242HV
+MDA0MDAxMjg5ODA0MDI5NDAx	Derbac-M Liquid 50ml	00400128	9804029401	LIR	liquid Regular	null	null	null	null	null	DEB	1242	Derbac M	Others	HV	Head Lice	HEA	Health	HEALTHCARE - OTHER	1242HV
+MDA0MDAzNjNHQkEy	REMEG,GB,ORIGINAL24SX6	00400363	GBA2	TAR	Tablet - Regular	5038483000236	null	null	null	null	REM	1708	Remegel	OTC	XV	Acid Blockers	HEA	Health	GI	1708XV
+MDA0MDc0M1BMQTI=	Cillit 2-phase 450 rub Romania	0040743	PLA2	LIR	liquid Regular	null	null	null	null	null	CIL	1186	Cillit	Hygiene	2B	Lime & Rust	HAH	Hygiene & Home	SPECIALITY PRODUCTS	11862B
+MDA0MDg3NFBMQTI=	CLGNT,GR,CALGONIT LEMON 9x1L	0040874	PLA2	LIR	liquid Regular	null	null	null	null	null	FIN	1337	Finish	Hygiene	JF	Mono Benefit Gel (ADWD)	HAH	Hygiene & Home	AUTOMATIC DISHWASHING	1337JF
+MDA0MDg4OEVTQTY=	FINSH,ES,CALGONIT GREEN 1.5L	0040888	ESA6	LIR	liquid Regular	18410104672116	null	Gel	Gel	AIO OLD	FIN	1337	Finish	Hygiene	JF	Mono Benefit Gel (ADWD)	HAH	Hygiene & Home	AUTOMATIC DISHWASHING	1337JF
+MDA0MTY1OUJSQTQ=	PMX,VEET,WHITE	0041659	BRA4	null	null	null	null	null	null	null	VET	1907	Veet	PC	DK	Creams Base	HEA	Health	HAIR REMOVAL	1907DK
+MDA0MjMzMTkzNDkwMzQ5MTA=	FINISH POWDER LEMON 12x1 KG	0042331	9349034910	POR	Powder Regular	null	null	null	null	null	FIN	1337	Finish	Hygiene	29	Powders - Reg&Con	HAH	Hygiene & Home	AUTOMATIC DISHWASHING	133729
+MDA0MjMzMklOQ0Q=	FINSH,AE,12X1,0KG VAE	0042332	INCD	POR	Powder Regular	8901396472001	null	null	null	null	FIN	1337	Finish	Hygiene	29	Powders - Reg&Con	HAH	Hygiene & Home	AUTOMATIC DISHWASHING	133729
+MDA0MjMzMklOQUw=	FINSH,AE,12X1,0KG VAE	0042332	INAL	POR	Powder Regular	8901396472001	null	null	null	null	FIN	1337	Finish	Hygiene	29	Powders - Reg&Con	HAH	Hygiene & Home	AUTOMATIC DISHWASHING	133729
+
+Table: edap_goldplus.sa_location_dim
+location	geography_id	location_desc	location_id	location_type_id	location_type	country	timestamp	jde_branch_plant	source_nm	update_run_ts	create_user_id	update_user_id	dqaction	dqmessage	row
+0000301324	VVM=	Boone Center Inc.	MDAwMDMwMTMyNA==	Q01P	EMO	US	2023-07-26 15:00	null	kinaxis	2023-07-26T15:39:01.000+00:00	715748489571813_2022-08-22_08:42:42	585815470512804_2023-07-26_15:38:58			null
+0000320732	R0I=	Wasdell Group	MDAwMDMyMDczMg==	Q01P	CMO	GB	2023-07-26 15:00	null	kinaxis	2023-07-26T15:39:01.000+00:00	715748489571813_2022-08-22_08:42:42	585815470512804_2023-07-26_15:38:58			null
+0040028084		DESARROLLO LOGISTICO, S.A. DE C.V.	MDA0MDAyODA4NA==	Q01P	CMO	null	2023-07-26 15:00	null	kinaxis	2023-07-26T15:39:01.000+00:00	715748489571813_2022-08-22_08:42:42	585815470512804_2023-07-26_15:38:58			null
+2040	SU4=	MJN TPL PPL,  Mumbai	MjA0MA==	REM=	DC	IN	2023-07-26 15:00	null	kinaxis	2023-07-26T15:39:01.000+00:00	715748489571813_2022-08-22_08:42:42	585815470512804_2023-07-26_15:38:58			null
+INAF	SU4=	Patna DC Hygiene Home	SU5BRg==	REM=	DC	IN	2023-07-26 15:00	null	kinaxis	2023-07-26T15:39:01.000+00:00	715748489571813_2022-08-22_08:42:42	585815470512804_2023-07-26_15:38:58			null
+INBF	SU4=	Kolkata DC Hygiene Home	SU5CRg==	REM=	DC	IN	2023-07-26 15:00	null	kinaxis	2023-07-26T15:39:01.000+00:00	715748489571813_2022-08-22_08:42:42	585815470512804_2023-07-26_15:38:58			null
+IR02	SVI=	RB Iran	SVIwMg==	U2FsZXNPcmc=	SalesOrg	IR	2023-07-26 15:00	null	kinaxis	2023-07-26T15:39:01.000+00:00	715748489571813_2022-08-22_08:42:42	585815470512804_2023-07-26_15:38:58			null
+THA2	VEg=	Factory Thailand Bangplee	VEhBMg==	TWZn	Mfg	TH	2023-07-26 15:00	null	kinaxis	2023-07-26T15:39:01.000+00:00	715748489571813_2022-08-22_08:42:42	585815470512804_2023-07-26_15:38:58			null
+7630057	VUE=	076-Optima-Pharm	NzYzMDA1Nw==	U2Vjb25kYXJ5Q3VzdG9tZXI=	SecondaryCustomer	UA	2024-03-13 03:40	null	kinaxis	2024-03-13T06:36:53.000+00:00	198255126038160_2024-03-13_06:36:48	198255126038160_2024-03-13_06:36:48			null
+0000929893	SUU=	Ireland UDC Health	MDAwMDkyOTg5Mw==	U2Vjb25kYXJ5Q3VzdG9tZXI=	SecondaryCustomer	IE	2024-05-22 04:32	null	kinaxis	2024-05-22T06:35:14.000+00:00	503947234918421_2024-05-22_06:35:11	503947234918421_2024-05-22_06:35:11			null
+339940	VEg=	RB RUMEA - TH - DC BANGKOK	MzM5OTQw	U2Vjb25kYXJ5Q3VzdG9tZXI=	SecondaryCustomer	TH	2024-05-22 04:32	null	kinaxis	2024-05-22T06:35:14.000+00:00	503947234918421_2024-05-22_06:35:11	503947234918421_2024-05-22_06:35:11			null
+0000105747		Comercial Lientur Limitada	MDAwMDEwNTc0Nw==		null	null	2024-06-13 03:33	null	kinaxis	2024-06-13T04:45:33.000+00:00	326642284308733_2024-06-13_04:45:25	326642284308733_2024-06-13_04:45:25			null
+
