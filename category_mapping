@@ -215,3 +215,19 @@ LEFT JOIN
 LEFT JOIN 
     edap_goldplus.d_new_bu nb
     ON ld.country = nb.Country AND dp.brand_code = nb.Brand;
+
+
+
+%sql
+SELECT 
+    p.brand_desc,
+    l.country
+FROM 
+    edap_goldplus.sa_product_dim p
+JOIN 
+    edap_goldplus.sa_location_dim l
+    ON p.site = l.location;
+----------------------
+LEFT JOIN 
+    edap_goldplus.d_new_bu n
+    ON UPPER(l.country) = UPPER(n.Country) AND UPPER(p.brand_desc) = UPPER(n.Brand);
