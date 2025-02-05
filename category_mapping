@@ -77,3 +77,28 @@ FROM edap_goldplus.sa_product_dim p
 INNER JOIN edap_goldplus.sa_location_dim l
 ON p.site = l.location;
 
+
+SELECT 
+    p.product_id,
+    p.product_desc,
+    p.product,
+    p.site,
+    p.product_form,
+    p.product_form_desc,
+    p.brand,
+    p.brand_desc,
+    p.category_desc,
+    l.location_desc,
+    l.location_type,
+    l.country,
+    b.Area,
+    b.Region,
+    b.Business_Segment,
+    b.Category
+FROM edap_goldplus.sa_product_dim p
+INNER JOIN edap_goldplus.sa_location_dim l
+    ON p.site = l.location
+INNER JOIN edap_goldplus.d_new_bu b
+    ON l.country = b.country_id
+    AND p.brand_desc = b.Brand;
+
