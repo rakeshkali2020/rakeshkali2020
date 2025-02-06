@@ -59,3 +59,29 @@ THA2	VEg=	Factory Thailand Bangplee	VEhBMg==	TWZn	Mfg	TH	2023-07-26 15:00	null	k
 339940	VEg=	RB RUMEA - TH - DC BANGKOK	MzM5OTQw	U2Vjb25kYXJ5Q3VzdG9tZXI=	SecondaryCustomer	TH	2024-05-22 04:32	null	kinaxis	2024-05-22T06:35:14.000+00:00	503947234918421_2024-05-22_06:35:11	503947234918421_2024-05-22_06:35:11			null
 0000105747		Comercial Lientur Limitada	MDAwMDEwNTc0Nw==		null	null	2024-06-13 03:33	null	kinaxis	2024-06-13T04:45:33.000+00:00	326642284308733_2024-06-13_04:45:25	326642284308733_2024-06-13_04:45:25			null
 
+
+%sql
+SELECT 
+    p.product_id,
+    p.product_desc,
+    p.product,
+    p.site,
+    p.brand,
+    l.country,
+    p.brand_desc,
+    n.Category,
+    p.product_form,
+    p.product_form_desc,
+    p.category_desc
+FROM 
+    edap_goldplus.sa_product_dim p
+INNER JOIN 
+    edap_goldplus.sa_location_dim l
+    ON p.site = l.location
+INNER JOIN 
+    edap_goldplus.d_new_bu n
+    ON UPPER(l.country) = UPPER(n.country_id) AND UPPER(p.brand_desc) = UPPER(n.Brand);
+
+
+
+
