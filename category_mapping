@@ -83,5 +83,17 @@ INNER JOIN
     ON UPPER(l.country) = UPPER(n.country_id) AND UPPER(p.brand_desc) = UPPER(n.Brand);
 
 
-
-
+%sql
+SELECT DISTINCT 
+d_product_sku_code,
+product_sku_code,
+sku_description,
+secondary_item_number,
+brand_code,
+brand_description,
+segment,
+category, -----PUT THE CATEGORY FROM THE d_new_bu table.
+uom,
+variant,
+product_attribute_1 ,
+from edap_transform.d_product_inc;
