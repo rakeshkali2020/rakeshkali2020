@@ -125,3 +125,55 @@ LEFT JOIN
     AND UPPER(p.brand_desc) = UPPER(n.Brand);
 
 
+
+
+
+
+
+
+
+
+%sql
+CREATE OR REPLACE VIEW edap_goldplus.d_product AS 
+SELECT DISTINCT 
+d_product_sku_code,
+product_sku_code,
+sku_description,
+secondary_item_number,
+brand_code,
+brand_description,
+segment,
+category,
+uom,
+variant,
+product_attribute_1 ,
+case when brand_description='Steradent' and product_attribute_2 ='OTC' then 'Steradent' else product_attribute_2 end as product_attribute_2,
+case when product_sku_code in ('00151','0018073','0022512','0022513','0022514','00244','01020','01220','01250','01700','01705','02000','0210461','02152','0216584','0236276','02433','02466','02469','02489','02491','02493','02495','02497','02499','02502','03200','03210','04000','04019','04040','04041','04042','04043','04044','04045','04050','04070','04074','04090','04100','04105','05060','053473','053480','053497','053503','067988','08030','08040') then segment else product_attribute_3 end as product_attribute_3,
+source,
+product_attribute_4, -- Added new attribute as part of CHG0047717 19thApril2021
+product_attribute_5, -- Added new attribute as part of CHG0047717 19thApril2021
+product_attribute_6, -- Added new attribute as part of CHG0047717 19thApril2021
+product_attribute_7,  -- Added new attribute as part of CHG0047717 19thApril2021
+case
+when brand_description in ("3 in 1","Abc","Aerogard","Airwick","Aladdin","Anil","Ava","Baranne","Belarom","Big Boy","Black Flag","Blitz","Bom Ar","Botanica","Botanical Origin","Brasso","Brasso MPC","Brio","Bryza","Bully","Calcor","Calfort","Calgofix","Calgon","Calgonit","Calinda","Cardeal","Cardinal","Ca-Va-Seul","Cera Clen/Vitro Clen","Ceraclen","Cherie","Cherry","Cherry Blossom","Cillit","Cillit Bang","Cleen-O-Pine","Cobra","Cobra MPC","Colin","Colman","Colon","Coopex","Coral","Crisp","Crown","Cruz Verde","Cupex","d-Con","Destac","Destop","Destree","Detefon","Dosia","Down to Earth","Drummer","Duraglit","Earex","Easy Off","Easy Off Bam","Easy On","Eclipse","Elena","Exit Mould","Fabulon","Fiesta","Finish","Floor","Flor","Fogo","Frank's RedHot","French's","Frend","Glass Plus","Glassex","Glen","Glen 10/20","Goldilocks","Goma Pox","Griffin","Harpic","Haze","Hippo","Hoffmann's","Hunter","Hurra","Inox","Institutional","Institutional Sales Spain","Interco","Jet Dry","Jik","Kalia","Karpex","Kwit","Lanza","Lavasbianca","Lime-A-Way","Lip","Little Lucifer","Livon","Look","Lovela","Lysol/Lizol","Magnum","Maison Verte","Mansion","Marc","Marigold","Min","Mop and Glo","Mortein","Mortein Plus","Mr Brasso","Mr Min","Mr Sheen","Napisan","Napisan (Italy)","Neophos","Not Applicable","Not Applicable - HyHo","Noxon","Nu Clenz","Nugget","O'Cedar","Old English","Oxyclean","Oxy-giftset","Oxysaksak","Passe Bem","Pea Beu","Perla","Pif Paf","Pine O Cleen","Pinolin","Planchytex","Poliflor","Polycera","Pop","Power 28","Powerclean","Preen","Procenex","Prosolve","Purity (Barley)","Quanto","Reckitts","Repelex","Resolv","Resolve (Fabric/Carpet)","Rex","Rid-X","Robin","Robinsons","Rodasol","Sagrotan","Sagrotan-P","Sani","Sanpic","Sbp","Scale Away","Set Wet","Shieldtox","Sidol","Silvo","Sipuro","Sole","Spray 'N Wash","St Marc","Steelo","Sunbeam","Super Drena","Super Voxe","Tabard","Target","Teepol","Tiga Roda","Timor","Tiret","Topps","Trix","Tru/Vanish","Vanish","Vani-Sol","Veja","Versal","Vitroclen","Windolene","Wizard","Woolite","Xau","Xau/Flor","Zeb","Zebra") then 'Hygiene'
+when brand_description in ("Contex","Durex","Erotica Delux","Gussarskiye","Intima de Karinzi","Jontex","Kohinoor","K-Y","Liasan","London","Lovetex","Ola","Olla","Queen V","Reflex","Sico","Soblazn") then 'IW'
+when brand_description in ("Alacta","AR (Infant Acid Reflux)","Cal-C-Tose","Chocomilk","Enfa Mama","Enfacare","Enfagrow","EnfaKid","Enfalac","Enfalyte","Enfamil","Enfapro","EnfaSchool","Enfinitas","Enspire","Expecta","Fer-in-Sol","Gentlease","Hospital Feeding System","IFCN All Other Consumer Produc","IFCN Non Product","IFCN Other Nutritionals","Lactofree","Lactum","Nutramigen","Other Special Infant Formula","Other Sustagen","Portagen","Pregestimil","Proaffinity","Prosobee","Provital","PurAmino","Reguline","SanCor Bebe","Starter Brand Nutrition","Sustagen","Sustagen Kids","Upspring","Vi-Flors","Vi-Sols") then 'Nutrition'
+when brand_description in ("Allerfre","Attest","Benactiv Gola","Benagol","Biofreeze","Bonjela","Buprex","Cardiprin","Cepacol","Citrosan","Codis","Colsprin","Cuprofen","D'Cold","Delsym","Dermodex","Dispril","Disprin","Disprin Cv","Disprol","Dobendan","Dolo-Dobendan","Eviplan","Evitest","Fosrenol","Full Marks","Fybogel","Gaviscon","Gavisconell","Glucolin","Graneodin B","HC45","Hemoal","Itchguard","Junifen","KeChuanNing","Lanacane","Lemsip","Luftafem","Luftal","Lutsine","ManYanShuNing","Meltus","Micostatin V","Moov","Mucinex","Mycota","Naldecon","Netol","Nureflex","Nurofen","Nuromol","Optrex","Paramol","Picot","Remegel","Repsils","Ring Guard","Scalpicin","Senokot","Silkofix","Silkoplast","Sinus","Solprin","Stopache","Strefen","Strepfen","Strepsils","Streptuss","Temgesic","Tempra","Therapearl","Transact","Tussils","Vicks","Woodwards","Xeramance") then 'OTC'
+when brand_description in ("Shortec","Aeroblast","Airfresh","All","Amope","Ansell","Atomic","Balta","Barbara Gould","Biactol","Binaca","Breathe","Buprenex","Burnol","Cera Liu","Contraleum Ultra","Dac","Dequa","Derbac M","Dermicool","Dr. Lips","E45","Endone","Eulactol","Finn","Gavilast","Helm Gloves","Hydrafnia","Hydromorphone","Immulia","Karvol","Krack","Laticort","Lillets Tampons","LingyangQingfei","Lucozade","Lysoform","Macleans","Matex","Medinol","Mediqtto","Medised","Merocaine","Me-U","Mister","Nieve","Not Applicable - Health","Nuroflash","Other","Oxynorm","Realcheck","Reckitt","Rexo","Rhinureflex","Scholl","Seboskin","SiTi","St Marc Pro","Stick Up","Suboxone","Subutex","Syndol","Tefilin","Tiger Balm","Tiger's Milk","Timodine","Unbranded","Uv Triplegard","Vetergesic","Waspeze","White Magic","Zatak") then 'others'
+when brand_description in ("Bactopur","Clearasil","Crest","Eryplast","Espadol","Kukident","Labocane","Lice MD","Lovelan","Muse","Nenuco","Private Label","Prosport","Sanitaplast","Sapoderm","Savlon","Sportslife","Superdent","Veet","Waxeeze","Steradent") then 'Self Care'
+when brand_description in ("Sugarine","Sweetex","Airborne","BodiOme","Digestive Advantage","MegaRed","Move Free","Neuriva","Oscal","Own Label","Schiff","Starter Brand VMS","Vitalmins","Booster (Probiotic)") then 'VMS'
+when brand_description in("Dettol") then 'Dettol'
+else product_attribute_1 end as brand_category
+from edap_transform.d_product_inc
+
+where lower(product_attribute_1) in ('health','nutrition','hygiene')
+and product_sku_code not in ('00128801')
+-- where d_product_sku_code not in(select distinct d_product_sku_code from (select d_product_sku_code ,count(*)
+-- from edap_stg.pfr_staging_d_product
+-- group by d_product_sku_code having count(*)>1));""")
+
+
+
+
+
+
