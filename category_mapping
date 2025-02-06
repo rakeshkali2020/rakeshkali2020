@@ -176,4 +176,57 @@ and product_sku_code not in ('00128801')
 
 
 
+CREATE OR REPLACE VIEW edap_goldplus.d_product AS 
+SELECT DISTINCT 
+    d.d_product_sku_code,
+    d.product_sku_code,
+    d.sku_description,
+    d.secondary_item_number,
+    d.brand_code,
+    d.brand_description,
+    d.segment,
+    n.Category AS category,  -- Replacing with Category from d_new_bu
+    d.uom,
+    d.variant,
+    d.product_attribute_1,
+    CASE 
+        WHEN d.brand_description = 'Steradent' AND d.product_attribute_2 = 'OTC' THEN 'Steradent' 
+        ELSE d.product_attribute_2 
+    END AS product_attribute_2,
+    CASE 
+        WHEN d.product_sku_code IN ('00151','0018073','0022512','0022513','0022514','00244','01020','01220','01250','01700','01705','02000','0210461','02152','0216584','0236276','02433','02466','02469','02489','02491','02493','02495','02497','02499','02502','03200','03210','04000','04019','04040','04041','04042','04043','04044','04045','04050','04070','04074','04090','04100','04105','05060','053473','053480','053497','053503','067988','08030','08040') 
+        THEN d.segment 
+        ELSE d.product_attribute_3 
+    END AS product_attribute_3,
+    d.source,
+    d.product_attribute_4,
+    d.product_attribute_5,
+    d.product_attribute_6,
+    d.product_attribute_7,
+    CASE 
+        WHEN d.brand_description IN ("3 in 1","Abc","Aerogard","Airwick","Aladdin","Anil","Ava","Baranne","Belarom","Big Boy","Black Flag","Blitz","Bom Ar","Botanica","Botanical Origin","Brasso","Brasso MPC","Brio","Bryza","Bully","Calcor","Calfort","Calgofix","Calgon","Calgonit","Calinda","Cardeal","Cardinal","Ca-Va-Seul","Cera Clen/Vitro Clen","Ceraclen","Cherie","Cherry","Cherry Blossom","Cillit","Cillit Bang","Cleen-O-Pine","Cobra","Cobra MPC","Colin","Colman","Colon","Coopex","Coral","Crisp","Crown","Cruz Verde","Cupex","d-Con","Destac","Destop","Destree","Detefon","Dosia","Down to Earth","Drummer","Duraglit","Earex","Easy Off","Easy Off Bam","Easy On","Eclipse","Elena","Exit Mould","Fabulon","Fiesta","Finish","Floor","Flor","Fogo","Frank's RedHot","French's","Frend","Glass Plus","Glassex","Glen","Glen 10/20","Goldilocks","Goma Pox","Griffin","Harpic","Haze","Hippo","Hoffmann's","Hunter","Hurra","Inox","Institutional","Institutional Sales Spain","Interco","Jet Dry","Jik","Kalia","Karpex","Kwit","Lanza","Lavasbianca","Lime-A-Way","Lip","Little Lucifer","Livon","Look","Lovela","Lysol/Lizol","Magnum","Maison Verte","Mansion","Marc","Marigold","Min","Mop and Glo","Mortein","Mortein Plus","Mr Brasso","Mr Min","Mr Sheen","Napisan","Napisan (Italy)","Neophos","Not Applicable","Not Applicable - HyHo","Noxon","Nu Clenz","Nugget","O'Cedar","Old English","Oxyclean","Oxy-giftset","Oxysaksak","Passe Bem","Pea Beu","Perla","Pif Paf","Pine O Cleen","Pinolin","Planchytex","Poliflor","Polycera","Pop","Power 28","Powerclean","Preen","Procenex","Prosolve","Purity (Barley)","Quanto","Reckitts","Repelex","Resolv","Resolve (Fabric/Carpet)","Rex","Rid-X","Robin","Robinsons","Rodasol","Sagrotan","Sagrotan-P","Sani","Sanpic","Sbp","Scale Away","Set Wet","Shieldtox","Sidol","Silvo","Sipuro","Sole","Spray 'N Wash","St Marc","Steelo","Sunbeam","Super Drena","Super Voxe","Tabard","Target","Teepol","Tiga Roda","Timor","Tiret","Topps","Trix","Tru/Vanish","Vanish","Vani-Sol","Veja","Versal","Vitroclen","Windolene","Wizard","Woolite","Xau","Xau/Flor","Zeb","Zebra") 
+        THEN 'Hygiene'
+        WHEN d.brand_description IN ("Contex","Durex","Erotica Delux","Gussarskiye","Intima de Karinzi","Jontex","Kohinoor","K-Y","Liasan","London","Lovetex","Ola","Olla","Queen V","Reflex","Sico","Soblazn") 
+        THEN 'IW'
+        ELSE d.product_attribute_1 
+    END AS brand_category
+FROM 
+    edap_transform.d_product_inc d
+LEFT JOIN 
+    edap_goldplus.sa_product_dim p 
+    ON d.product_sku_code = p.product_id  -- Ensure this mapping is correct
+LEFT JOIN 
+    edap_goldplus.sa_location_dim l 
+    ON p.site = l.location
+LEFT JOIN 
+    edap_goldplus.d_new_bu n 
+    ON UPPER(l.country) = UPPER(n.country_id) 
+    AND UPPER(p.brand_desc) = UPPER(n.Brand)
+WHERE 
+    LOWER(d.product_attribute_1) IN ('health','nutrition','hygiene')
+    AND d.product_sku_code NOT IN ('00128801');
+
+
+
+
 
