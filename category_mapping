@@ -97,3 +97,31 @@ uom,
 variant,
 product_attribute_1 ,
 from edap_transform.d_product_inc;
+
+
+SELECT DISTINCT 
+    d.product_sku_code,
+    d.product_sku_code,
+    d.sku_description,
+    d.secondary_item_number,
+    d.brand_code,
+    d.brand_description,
+    d.segment,
+    n.Category AS category,  -- Replacing with Category from d_new_bu
+    d.uom,
+    d.variant,
+    d.product_attribute_1
+FROM 
+    edap_transform.d_product_inc d
+LEFT JOIN 
+    edap_goldplus.sa_product_dim p 
+    ON d.product_sku_code = p.product_id  -- Adjust this join condition based on actual mapping
+LEFT JOIN 
+    edap_goldplus.sa_location_dim l 
+    ON p.site = l.location
+LEFT JOIN 
+    edap_goldplus.d_new_bu n 
+    ON UPPER(l.country) = UPPER(n.country_id) 
+    AND UPPER(p.brand_desc) = UPPER(n.Brand);
+
+
