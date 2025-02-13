@@ -1,31 +1,34 @@
 %sql
-SELECT b.`_BIC_GBRAND` as brand_id, a.* 
-FROM edap_goldplus.d_new_bu a 
-LEFT JOIN edap_stg.fusion_brand_hierarchy b on a.brand = b.txtmd
-
-
-%sql
-SELECT p.brand, l.country, n.*, h._BIC_ZCATG_T   -- Category Column
+SELECT p.brand, n.Brand, l.country, n.`Business Segment`, h._BIC_ZSECTOR_T  -- Category Column
 FROM edap_goldplus.sa_product_dim p
 LEFT JOIN edap_goldplus.sa_location_dim l ON p.site = l.location
 LEFT JOIN edap_goldplus.d_new_bu n ON UPPER(l.country) = UPPER(n.country_id) AND UPPER(p.brand_desc) = UPPER(n.Brand)
 LEFT JOIN edap_stg.fusion_segment_hierarchy h ON p.segment = h._BIC_GSEGMENT
 
 
-%sql
-SELECT 
-    b.`_BIC_GBRAND` AS brand_id, 
-    p.brand, 
-    l.country, 
-    n.*, 
-    h._BIC_ZCATG_T   -- Category Column
-FROM edap_goldplus.sa_product_dim p
-LEFT JOIN edap_goldplus.sa_location_dim l 
-    ON p.site = l.location
-LEFT JOIN edap_goldplus.d_new_bu n 
-    ON UPPER(l.country) = UPPER(n.country_id) 
-    AND UPPER(p.brand_desc) = UPPER(n.Brand)
-LEFT JOIN edap_stg.fusion_segment_hierarchy h 
-    ON p.segment = h._BIC_GSEGMENT
-LEFT JOIN edap_stg.fusion_brand_hierarchy b 
-    ON n.brand = b.txtmd;
+brand	Brand	country	Business Segment	CATEGORY
+1242	Derbac M	AE	Reckitt Core	SELF CARE
+1242	null	NZ	null	SELF CARE
+1708	Remegel	GB	Reckitt Core	SELF CARE
+1186	Cillit	PL	Essential Home	GERM PROT
+1337	Finish	PL	Reckitt Core	HH CARE
+1337	Finish	ES	Reckitt Core	HH CARE
+1907	Veet	BR	Reckitt Core	INT WELL
+1571	Not Applicable	GB	Essential Home	OTHER OBS
+1337	Finish	AE	Reckitt Core	HH CARE
+1337	Finish	IN	Reckitt Core	HH CARE
+
+
+TABLE: edap_goldplus.d_new_bu 
+Brand	Country	Business_Segment	Area	Region	CATEGORY
+3 in 1	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
+Aerogard	Brazil	Essential Home	Emerging Markets	LATAM	Pest
+Airwick	Brazil	Essential Home	Emerging Markets	LATAM	Air
+Anil	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
+Baranne	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
+Belarom	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
+Bom Ar	Brazil	Essential Home	Emerging Markets	LATAM	Air
+Brasso	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
+Brasso MPC	Brazil	Essential Home	Emerging Markets	LATAM	#N/A
+Cardeal	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
+Ca-Va-Seul	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
