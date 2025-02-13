@@ -16,3 +16,26 @@ SELECT
         ELSE Category 
     END AS Category
 FROM df_category;
+
+df_category = spark.sql("""
+    SELECT 
+        d.country_id, 
+        d.Brand, 
+        d.Country, 
+        d.Area, 
+        d.Region, 
+        d.`Business Segment`,
+        CASE 
+            WHEN d.`Business Segment` = 'Essential Home' THEN NVL(c._BIC_ZSECTOR_T, d.Category)
+            ELSE d.Category 
+        END AS Category
+    FROM edap_goldplus.d_new_bu d
+    LEFT JOIN edap_goldplus.sa_product_dim b 
+        ON d.Brand = b.brand_desc
+    LEFT JOIN edap_goldplus.sa_location_dim a 
+        ON b.site = a.location AND d.country_id = a.country
+    LEFT JOIN edap_stg.fusion_segment_hierarchy c 
+        ON b.segment = c._BIC_GSEGMENT
+""")
+
+df_category.createOrReplaceTempView("df_category")
