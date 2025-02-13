@@ -76,3 +76,23 @@ LEFT JOIN edap_goldplus.d_new_bu d
     AND UPPER(n.`Business Segment`) = UPPER(d.`Business_Segment`);
 
 
+%sql
+SELECT 
+    p.brand, 
+    n.Brand, 
+    l.country, 
+    n.`Business Segment`, 
+    d.Category  -- Fetching Category from d_new_bu
+FROM edap_goldplus.sa_product_dim p
+LEFT JOIN edap_goldplus.sa_location_dim l 
+    ON p.site = l.location
+LEFT JOIN edap_goldplus.d_new_bu n 
+    ON UPPER(TRIM(l.country)) = UPPER(TRIM(n.country_id)) 
+    AND UPPER(TRIM(p.brand_desc)) = UPPER(TRIM(n.Brand))
+LEFT JOIN edap_goldplus.d_new_bu d 
+    ON UPPER(TRIM(n.Brand)) = UPPER(TRIM(d.Brand))
+    AND UPPER(TRIM(l.country)) = UPPER(TRIM(d.Country))
+    AND UPPER(TRIM(n.`Business Segment`)) = UPPER(TRIM(d.`Business_Segment`));
+
+
+
