@@ -32,3 +32,26 @@ Brasso	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
 Brasso MPC	Brazil	Essential Home	Emerging Markets	LATAM	#N/A
 Cardeal	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
 Ca-Va-Seul	Brazil	Essential Home	Emerging Markets	LATAM	Cleaners
+
+
+
+%sql
+SELECT 
+    p.brand, 
+    n.Brand, 
+    l.country, 
+    n.`Business Segment`, 
+    COALESCE(d.Category, h._BIC_ZSECTOR_T) AS Category
+FROM edap_goldplus.sa_product_dim p
+LEFT JOIN edap_goldplus.sa_location_dim l 
+    ON p.site = l.location
+LEFT JOIN edap_goldplus.d_new_bu n 
+    ON UPPER(l.country) = UPPER(n.country_id) 
+    AND UPPER(p.brand_desc) = UPPER(n.Brand)
+LEFT JOIN edap_stg.fusion_segment_hierarchy h 
+    ON p.segment = h._BIC_GSEGMENT
+LEFT JOIN edap_goldplus.d_new_bu d 
+    ON UPPER(n.Brand) = UPPER(d.Brand)
+    AND UPPER(l.country) = UPPER(d.Country)
+    AND UPPER(n.`Business Segment`) = UPPER(d.`Business_Segment`);
+
