@@ -117,3 +117,23 @@ LEFT JOIN edap_goldplus.d_new_bu d
 
 
 
+%sql
+SELECT 
+    p.brand, 
+    n.Brand, 
+    l.country, 
+    n.`Business Segment`, 
+    d2.CATEGORY  -- Fetching Category from self-joined edap_goldplus.d_new_bu
+FROM edap_goldplus.sa_product_dim p
+LEFT JOIN edap_goldplus.sa_location_dim l 
+    ON p.site = l.location
+LEFT JOIN edap_goldplus.d_new_bu n 
+    ON UPPER(l.country) = UPPER(n.country_id) 
+    AND UPPER(p.brand_desc) = UPPER(n.Brand)
+-- Self join to fetch CATEGORY
+LEFT JOIN edap_goldplus.d_new_bu d2 
+    ON UPPER(n.Brand) = UPPER(d2.Brand)
+    AND UPPER(l.country) = UPPER(d2.Country)
+    AND UPPER(n.`Business Segment`) = UPPER(d2.`Business_Segment`);
+
+
