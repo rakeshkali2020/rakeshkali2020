@@ -1,34 +1,12 @@
-df_category = spark.sql("""
-    SELECT 
-        d.country_id, 
-        d.Brand, 
-        d.Country, 
-        d.Area, 
-        d.Region, 
-        d.`Business Segment`,
-        NVL(c._BIC_ZSECTOR_T, d.Category) AS Category
-    FROM edap_goldplus.sa_location_dim a
-    LEFT JOIN edap_goldplus.sa_product_dim b 
-        ON b.site = a.location
-    LEFT JOIN edap_stg.fusion_segment_hierarchy c 
-        ON b.segment = c._BIC_GSEGMENT
-    LEFT JOIN edap_goldplus.d_new_bu d 
-        ON d.Brand = b.brand_desc 
-        AND d.country_id = a.country
-    WHERE d.`Business Segment` = 'Essential Home'
-    
-    UNION
-    
-    SELECT 
-        country_id, 
-        Brand, 
-        Country, 
-        Area, 
-        Region, 
-        `Business Segment`, 
-        Category 
-    FROM edap_goldplus.d_new_bu 
-    WHERE `Business Segment` != 'Essential Home'
-""")
-
-df_category.createOrReplaceTempView("df_category")
+%sql
+select country_id, Brand, Country, Area, Region, `Business Segment`,
+case
+  when Category like "GERM PROT" then "Germ Protection"
+  when Category like "HH CARE" then "Household Care"
+  when Category like "INT WELL" then "Intimate Wellness"
+  when Category like "SELF CARE" then "Self-Care"
+  when Category like "OTHER OBS" then "Other"
+  when Category like "NUTRITION" then "Nutrition"
+  else Category end
+AS Category
+from df_category
