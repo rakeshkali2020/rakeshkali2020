@@ -1,12 +1,18 @@
 %sql
-select country_id, Brand, Country, Area, Region, `Business Segment`,
-case
-  when Category like "GERM PROT" then "Germ Protection"
-  when Category like "HH CARE" then "Household Care"
-  when Category like "INT WELL" then "Intimate Wellness"
-  when Category like "SELF CARE" then "Self-Care"
-  when Category like "OTHER OBS" then "Other"
-  when Category like "NUTRITION" then "Nutrition"
-  else Category end
-AS Category
-from df_category
+SELECT 
+    country_id, 
+    Brand, 
+    Country, 
+    Area, 
+    Region, 
+    `Business Segment`,
+    CASE 
+        WHEN Category LIKE "GERM PROT" THEN "Germ Protection"
+        WHEN Category LIKE "HH CARE" THEN "Household Care"
+        WHEN Category LIKE "INT WELL" THEN "Intimate Wellness"
+        WHEN Category LIKE "SELF CARE" THEN "Self-Care"
+        WHEN Category LIKE "OTHER OBS" THEN "Other"
+        WHEN Category LIKE "NUTRITION" THEN "Nutrition"
+        ELSE Category 
+    END AS Category
+FROM df_category;
