@@ -10,3 +10,22 @@ FROM edap_goldplus.sa_product_dim p
 LEFT JOIN edap_goldplus.sa_location_dim l ON p.site = l.location
 LEFT JOIN edap_goldplus.d_new_bu n ON UPPER(l.country) = UPPER(n.country_id) AND UPPER(p.brand_desc) = UPPER(n.Brand)
 LEFT JOIN edap_stg.fusion_segment_hierarchy h ON p.segment = h._BIC_GSEGMENT
+
+
+%sql
+SELECT 
+    b.`_BIC_GBRAND` AS brand_id, 
+    p.brand, 
+    l.country, 
+    n.*, 
+    h._BIC_ZCATG_T   -- Category Column
+FROM edap_goldplus.sa_product_dim p
+LEFT JOIN edap_goldplus.sa_location_dim l 
+    ON p.site = l.location
+LEFT JOIN edap_goldplus.d_new_bu n 
+    ON UPPER(l.country) = UPPER(n.country_id) 
+    AND UPPER(p.brand_desc) = UPPER(n.Brand)
+LEFT JOIN edap_stg.fusion_segment_hierarchy h 
+    ON p.segment = h._BIC_GSEGMENT
+LEFT JOIN edap_stg.fusion_brand_hierarchy b 
+    ON n.brand = b.txtmd;
