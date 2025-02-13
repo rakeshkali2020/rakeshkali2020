@@ -1,11 +1,34 @@
-df_category = spark.sql("""select d.country_id, d.Brand, d.Country, d.Area, d.Region, d.`Business Segment`,
-nvl(c._BIC_ZSECTOR_T,d.Category) AS Category
-from edap_goldplus.sa_location_dim a
-left join edap_goldplus.sa_product_dim b on b.site = a.location
-left join edap_stg.fusion_segment_hierarchy c on b.segment = c._BIC_GSEGMENT
-left join edap_goldplus.d_new_bu d on d.Brand = b.brand_desc and d.country_id = a.country
-where d.`Business Segment` = 'Essential Home'
-union
-select country_id, Brand, Country, Area, Region, `Business Segment`, Category from edap_goldplus.d_new_bu where `Business Segment` != 'Essential Home'
+df_category = spark.sql("""
+    SELECT 
+        d.country_id, 
+        d.Brand, 
+        d.Country, 
+        d.Area, 
+        d.Region, 
+        d.`Business Segment`,
+        NVL(c._BIC_ZSECTOR_T, d.Category) AS Category
+    FROM edap_goldplus.sa_location_dim a
+    LEFT JOIN edap_goldplus.sa_product_dim b 
+        ON b.site = a.location
+    LEFT JOIN edap_stg.fusion_segment_hierarchy c 
+        ON b.segment = c._BIC_GSEGMENT
+    LEFT JOIN edap_goldplus.d_new_bu d 
+        ON d.Brand = b.brand_desc 
+        AND d.country_id = a.country
+    WHERE d.`Business Segment` = 'Essential Home'
+    
+    UNION
+    
+    SELECT 
+        country_id, 
+        Brand, 
+        Country, 
+        Area, 
+        Region, 
+        `Business Segment`, 
+        Category 
+    FROM edap_goldplus.d_new_bu 
+    WHERE `Business Segment` != 'Essential Home'
 """)
+
 df_category.createOrReplaceTempView("df_category")
