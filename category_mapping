@@ -39,3 +39,7 @@ df_category = spark.sql("""
 """)
 
 df_category.createOrReplaceTempView("df_category")
+
+
+
+I wanted to inform you that my brother had an accident while coming back home from the office—he slipped on the stairs and has suffered a fracture in his left hand. I’ll be taking a day off today to take care of him and assist with any necessary medical attention.
