@@ -3,3 +3,27 @@ left join (select DISTINCT global_item_number,dc,max(ppg) as ppg from  edap_tran
 on A.product=B.global_item_number and
 A.site=B.dc  where business_unit_new is not null
 and business_unit_new in ('Health','Nutrition','Hygiene')
+
+
+
+query = {
+  "sa_product_dim": """SELECT p.product_id, p.product, p.site, p.product_desc, p.unit_of_measure, p.product_form, p.product_form_desc, p.ean_code, p.variant, p.brand, p.brand_short_code, p.brand_desc,(case 
+  WHEN p.brand_desc in("Contex","Durex","Erotica Delux","Gussarskiye","Intima de Karinzi","Jontex","Kohinoor","K-Y","Liasan","London","Ola","Queen V","Reflex","Sico","Lovetex","Soblazn") then 'IW' 
+  WHEN p.brand_desc in ("Biofreeze","Fosrenol","Fybogel","Glucolin","Luftal","ManYanShuNing","Repsils","Senokot","Silkofix","Silkoplast","Tempra","Therapearl","Transact","Tussils","Woodwards","Allerfre","Benactiv Gola","Benagol","Bonjela","Cardiprin","Cepacol","Citrosan","Cuprofen","D'Cold","Delsym","Dermodex","Disprin","Disprin Cv","Disprol","Dobendan","Gaviscon","Gavisconell","Graneodin B","HC45","Hemoal","Itchguard","KeChuanNing","Lanacane","Lemsip","Luftafem","Lutsine","Micostatin V","Mucinex","Naldecon","Nureflex","Nurofen","Nuromol","Optrex","Paramol","Picot","Ring Guard","Scalpicin","Sinus","Solprin","Steradent","Stopache","Strefen","Strepfen","Strepsils","Vicks","Xeramance","Buprex","Codis","Colsprin","Dispril","Dolo-Dobendan","Junifen","Meltus","Netol","Remegel","Streptuss","Temgesic") then 'OTC'
+  WHEN p.brand_desc in ("Attest","Bactopur","Clearasil","Dettol","Eryplast","Espadol","Eviplan","Evitest","Full Marks","Kukident","Lice MD","Lovelan","Moov","Muse","Mycota","Nenuco","Private Label","Sapoderm","Savlon","Sugarine","Superdent","Sweetex","Veet","Waxeeze","Crest","Labocane","Prosport","Sanitaplast","Sportslife") then 'PC'
+  WHEN p.brand_desc in ("Airborne","BodiOme","Booster (Probiotic)","Digestive Advantage","MegaRed","Move Free","Neuriva","Oscal","Schiff") then 'VMS' ELSE 'Not Assigned' END)AS brand_category,
+  p.segment_desc, p.segment, p.business_unit,(case 
+  when p.business_unit='HEA' then 'Health'
+  when p.business_unit='VMS' then 'Health'
+  when p.business_unit='HAH' then 'Hygiene'
+  when p.business_unit='NTR' then 'Nutrition' end) as business_unit_new,
+  p.supply_frequency,p.material_type, p.color, p.consumer_product_size_id, p.saleable_pack_size, p.gross_weight, p.net_weight, p.weight_uom, p.height, p.width, p.length, p.dimension_uom, p.volume, p.volume_uom, p.primary_packaging_type, p.temp_conditions, p.lpg1_pg1, p.lpg1_description, p.lpg2_pg2, p.lpg2_description, p.lpg3_pg3, p.lpg3_description, p.lpg4_pg4, p.lpg4_description, p.lpg5_pg5, p.lpg5_description, p.line_of_business_description, p.component_class_id, p.component_class_description, p.component_group_id, p.component_group_description, p.component_material_id, p.component_material_description, p.cpc_cpc, p.cpc_description, p.local_project_name, p.material_group_id,
+  CASE WHEN p.material_group_id IN ('6500' ,'6501') THEN 'YES' ELSE 'NO' END AS emb_product ,
+  p.material_group_description, p.product_category_id, p.product_category_description, p.promotion_type_id, p.promotion_type_description, p.global_currency, p.supply_planner_code, p.demand_planner_code, p.segmentation, p.minimum_shelf_life, p.timestamp, p.GTIN, p.UPC, p.PPG, p.PG1, p.PG2, p.PG3, p.Interchangeable_main_sku_indicator, p.Interchangeable_alternate_sku_indicator,p.planner_code_factory,p.planner_code_commercial,p.planner_code_connected,p.mrp_type,p.plan_sp_mat_status,p.LOT_SIZE_MIN,p.LOT_SIZE_ROUND,p.LOT_SIZE_MAX,p.PLANNING_CALENDARS,p.IS_ALTERNATE_PART,p.IS_PRIMARY_PART, p.Factory_Brand, m.DISMM AS obsolete_mrp_type, s.sub_segment_cd, s.sub_segment_desc, s.segment_group_cd, s.segment_group_desc, s.category_cd, s.category_desc, s.sub_category_cd, s.sub_category_desc, s.category_group_cd, s.category_group_desc, s.sector_cd, s.sector_desc, p.source_nm, p.update_run_ts, p.create_user_id, p.update_user_id, p.dqaction, p.dqmessage
+  --FROM edap_transform.rr_product p 
+  FROM edap_stg.rr_product
+  LEFT JOIN (SELECT MATNR, WERKS, DISMM FROM edap_stg.turbo_marc WHERE isCurrent=1 UNION SELECT MATNR, WERKS, DISMM FROM edap_stg.sunrise_marc where iscurrent =1) m
+  ON p.product=m.MATNR AND p.site=m.WERKS
+  LEFT JOIN (select segment_cd, sub_segment_cd, sub_segment_desc, segment_group_cd, segment_group_desc, category_cd, category_desc, sub_category_cd, sub_category_desc, category_group_cd, category_group_desc, sector_cd, sector_desc from edap_transform.segment_hrchy where IS_CURRENT_IN =1 ) s
+  ON p.segment=s.segment_cd"""
+}
