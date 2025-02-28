@@ -11,3 +11,37 @@ AND customer_number not in ('0000921884','0000921885','0000921886','0000921887',
 cte_abs_error as (select *, round(ABS(actual_qty-Forecast_lag_qty)) as absolute_error from cte_sum)
 select * from cte_abs_error""")
 df_data_health.createOrReplaceTempView('actual_forecast_hea')
+
+
+
+Health flag
+#calcualting absolute_error
+# added customer level filters before fetching the data from flat table so that in FE all reports are in sync
+df_data_health=spark.sql("""
+with cte_far as (select year,month,market,Country,brand_Desc,global_Item_Number as product_sku,product_desc,line_of_business_description,Business_Segment,ean_code,lag_value,'health' as flag,actual_qty_cases,Forecast_lag_qty_cases,area,`region` from edap_goldplus.global_far_flat where((upper(ReckittCoreR1_CustomerLevel4_Description) not in ('PRICECHECK HYHO PLAN TO','L4 BB CONCEPT','L4 BLOKKER','L4 BRAND MASTERS NL','L4 HELEY INT HYHO PLAN TO','L4 INTERNAL SAMPLES HYHO PLAN TO','L4 TOP BRANDS','L4 TOPBRANDS','L4 WEST COAST SUPPLY GROUP','L4 WTE')) 
+AND (upper(ReckittCoreR1_CustomerLevel3_Description) not in ('CLEARANCE BROKER')) 
+AND (upper(ReckittCoreR1_CustomerLevel2_Description) not in ('L2 - AO-CLOSE-OUT HEA','L2 - CLOSE-OUT','L2 - CLOSEOUT ALL OTHER HEA','L2 - E-COMMERCE','L2 - INTERNAL REPORTING','L2 - INTERNAL REPORTING CA','L2 - INTERNAL REPORTING CA HEA','L2 - INTERNAL REPORTING HEA','L2 - INTRA GROUP','L2 - LIBERTY','L2 - NORDIC BROKER HYHO PLAN TO',"L2 - OLLIE'S","L2 - OLLIE'S HEA",'L2 HU BROKER')) 
+AND (upper(ReckittCoreR1_CustomerLevel1_Description) not in ('L1 CLEARANCE', 'L1 DONATION CUSTOMER')) 
+AND customer_number not in ('0000921884','0000921885','0000921886','0000921887','0000921888','0000921917','0000921918','0000921919','0000921924','0000921925','0000921926','0000921927','0000921928','0000921929','0000923254','0000923494','0000923590','0000923662','0000927298','0000927881','0000928105','0000928204','0000928322','0000928904','0000928923','0000928948','0000929856','0000929424','0000929519','0000929598','0000930485','0000930503','0000930533','0000930977','0000930985','0000931009','0000931121','0000931176','0000931322','0000931747','0000931825',
+'0000931902','0000932003','0000932092','0000932157')))
+,cte_sum(select year,month,market,Country,max(brand_Desc) as brand_Desc, max(product_sku) as product_sku, max(product_desc) as product_desc, min(line_of_business_description) as line_of_business_description, min(Business_Segment) as Business_Segment, ean_code,max(lag_value) as lag_value,flag,sum(actual_qty_cases) as actual_qty,sum(Forecast_lag_qty_cases) as Forecast_lag_qty,area,`region` from cte_far where brand_desc not in ('NOT APPLICABLE','NOT APPLICABLE - HYHO') group by year,month,market,Country,ean_code,flag,area,`region`),
+cte_abs_error as (select *, round(ABS(actual_qty-Forecast_lag_qty)) as absolute_error from cte_sum)
+select * from cte_abs_error""")
+df_data_health.createOrReplaceTempView('actual_forecast_hea')
+
+
+Hygiene
+#calcualting absolute_error
+# added customer level filters before fetching the data from flat table so that in FE all reports are in sync
+df_data_hyg=spark.sql("""
+with cte_far as (select year,month,brand_Desc,global_Item_Number as product_sku,product_desc,country_attribute_2,country_attribute_1,line_of_business_description,Business_Segment,ean_code,lag_value,'hygiene' as flag,actual_qty_cases,Forecast_lag_qty_cases,Country_Attribute_4 as area,Country_Attribute_3 as `region` from edap_goldplus.global_far_flat where 
+((upper(ReckittCoreR1_CustomerLevel4_Description) not in ('PRICECHECK HYHO PLAN TO','L4 BB CONCEPT','L4 BLOKKER','L4 BRAND MASTERS NL','L4 HELEY INT HYHO PLAN TO','L4 INTERNAL SAMPLES HYHO PLAN TO','L4 TOP BRANDS','L4 TOPBRANDS','L4 WEST COAST SUPPLY GROUP','L4 WTE')) 
+AND (upper(ReckittCoreR1_CustomerLevel3_Description) not in ('CLEARANCE BROKER')) 
+AND (upper(ReckittCoreR1_CustomerLevel2_Description) not in ('L2 - AO-CLOSE-OUT HEA','L2 - CLOSE-OUT','L2 - CLOSEOUT ALL OTHER HEA','L2 - E-COMMERCE','L2 - INTERNAL REPORTING','L2 - INTERNAL REPORTING CA','L2 - INTERNAL REPORTING CA HEA','L2 - INTERNAL REPORTING HEA','L2 - INTRA GROUP','L2 - LIBERTY','L2 - NORDIC BROKER HYHO PLAN TO',"L2 - OLLIE'S","L2 - OLLIE'S HEA",'L2 HU BROKER')) 
+AND (upper(ReckittCoreR1_CustomerLevel1_Description) not in ('L1 CLEARANCE', 'L1 DONATION CUSTOMER')) 
+AND customer_number not in ('0000921884','0000921885','0000921886','0000921887','0000921888','0000921917','0000921918','0000921919','0000921924','0000921925','0000921926','0000921927','0000921928','0000921929','0000923254','0000923494','0000923590','0000923662','0000927298','0000927881','0000928105','0000928204','0000928322','0000928904','0000928923','0000928948','0000929856','0000929424','0000929519','0000929598','0000930485','0000930503','0000930533','0000930977','0000930985','0000931009','0000931121','0000931176','0000931322','0000931747','0000931825',
+'0000931902','0000932003','0000932092','0000932157')))
+,cte_sum(select year,month,max(brand_Desc) as brand_Desc, max(product_sku) as product_sku, max(product_desc) as product_desc,country_attribute_2,country_attribute_1,min(line_of_business_description) as line_of_business_description, min(Business_Segment) as Business_Segment, ean_code,max(lag_value) as lag_value,flag,sum(actual_qty_cases) as actual_qty,sum(Forecast_lag_qty_cases) as Forecast_lag_qty,area,`region` from cte_far where brand_desc not in ('NOT APPLICABLE','NOT APPLICABLE - HYHO') group by year,month,country_attribute_2,country_attribute_1,ean_code,flag,area,`region`),
+cte_abs_error as (select *, round(ABS(actual_qty-Forecast_lag_qty)) as absolute_error from cte_sum)
+select * from cte_abs_error""")
+df_data_hyg.createOrReplaceTempView('actual_forecast_hyg')
