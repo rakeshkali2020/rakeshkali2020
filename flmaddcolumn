@@ -1,0 +1,39 @@
+#######jobAudit####
+import json
+notebook_data=json.loads(dbutils.notebook.entry_point.getDbutils().notebook().getContext().toJson())
+job_id=notebook_data["tags"]["jobId"]
+#job_id='890354628213992'
+pid=job_id+'_'+str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S"))
+task_id=notebook_data["currentRunId"]["id"]
+#task_id='5817906'
+### replace taskKey with jobName if only one task per job ###
+job_name=notebook_data["tags"]["taskKey"] if "taskKey" in notebook_data["tags"] else notebook_data["tags"]["jobName"]
+if "Untitled" in job_name:
+  job_name = "DIM_Master_Job_" + deltaTableName
+#job_name='EDAP-DIM_TABLE-Product'
+orgId=notebook_data["tags"]["orgId"]
+#orgId='7457001501688269'
+#url="https://adb-6276692005920322.2.azuredatabricks.net/?o="+str(orgId)+"#job/"+str(job_id)+"/run/"+str(task_id)
+url=notebook_data["extraContext"]["api_url"]+"/?o="+str(orgId)+"#job/"+str(job_id)+"/run/"+str(task_id)
+project="EDAP_DP"
+start_date=datetime.now()
+end_date=None
+job_status='running'
+insert_time=None
+load_type="delta"
+message="begin"
+source_name=deltaTableName
+source_object=landingPath
+target_name=deltaTableName
+target_object="preStagingLayer"
+#
+input_count=0
+output_count=0
+source_layer='LANDING'
+target_layer='PRESTAGING'
+dropoff=''
+user=notebook_data["tags"]["user"]
+clusterId = notebook_data["tags"]["clusterId"]
+notebook_path = notebook_data["extraContext"]["notebook_path"]
+jobTriggerType = notebook_data["tags"]["jobTriggerType"]
+insertJobAudit(pid,job_id,task_id,job_name,project,start_date,end_date,job_status,insert_time,load_type,message,source_name,source_object,target_name,target_object)
