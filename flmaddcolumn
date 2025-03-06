@@ -471,3 +471,12 @@ except Exception as msg:
 finally:
   update_push_down(job_status,message,pid)
   SendEmailAlert(job_name,job_status,message,url,start_date,user,clusterId,notebook_path,jobTriggerType,target_layer)
+
+SELECT table_name, column_name 
+FROM information_schema.columns 
+WHERE column_name IN (
+    'month', 'year', 'global_item_number', 'customer_number', 
+    'dc', 'salesorg', 'forecast_item', 'alternate_old_sku_code', 
+    'sourcing_factory', 'channel'
+);
+
