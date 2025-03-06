@@ -1,39 +1,473 @@
-#######jobAudit####
-import json
-notebook_data=json.loads(dbutils.notebook.entry_point.getDbutils().notebook().getContext().toJson())
-job_id=notebook_data["tags"]["jobId"]
-#job_id='890354628213992'
-pid=job_id+'_'+str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S"))
-task_id=notebook_data["currentRunId"]["id"]
-#task_id='5817906'
-### replace taskKey with jobName if only one task per job ###
-job_name=notebook_data["tags"]["taskKey"] if "taskKey" in notebook_data["tags"] else notebook_data["tags"]["jobName"]
-if "Untitled" in job_name:
-  job_name = "DIM_Master_Job_" + deltaTableName
-#job_name='EDAP-DIM_TABLE-Product'
-orgId=notebook_data["tags"]["orgId"]
-#orgId='7457001501688269'
-#url="https://adb-6276692005920322.2.azuredatabricks.net/?o="+str(orgId)+"#job/"+str(job_id)+"/run/"+str(task_id)
-url=notebook_data["extraContext"]["api_url"]+"/?o="+str(orgId)+"#job/"+str(job_id)+"/run/"+str(task_id)
-project="EDAP_DP"
-start_date=datetime.now()
-end_date=None
-job_status='running'
-insert_time=None
-load_type="delta"
-message="begin"
-source_name=deltaTableName
-source_object=landingPath
-target_name=deltaTableName
-target_object="preStagingLayer"
-#
-input_count=0
-output_count=0
-source_layer='LANDING'
-target_layer='PRESTAGING'
-dropoff=''
-user=notebook_data["tags"]["user"]
-clusterId = notebook_data["tags"]["clusterId"]
-notebook_path = notebook_data["extraContext"]["notebook_path"]
-jobTriggerType = notebook_data["tags"]["jobTriggerType"]
-insertJobAudit(pid,job_id,task_id,job_name,project,start_date,end_date,job_status,insert_time,load_type,message,source_name,source_object,target_name,target_object)
+import sys
+listfolder=dbutils.fs.ls(landingPath)
+output=''
+
+try:
+  # We will first truncate the table before loading the data
+  if deltaTableName != '':
+    [truncateQuery] = truncate[deltaTableName].replace("\n"," ").replace("\t"," ").split('|')
+    spark.sql(truncateQuery)
+    
+#   ######################## For "rr_dp_forward_looking_measures" we will process all files at one go ##############################
+#   if deltaTableName == 'rr_dp_forward_looking_measures':
+#      # We will process only files and ignore folders
+#     files=[]
+#     for obj in listfolder:
+#       if obj.path[-1] != '/':
+#         files.append(obj)
+        
+#     # Processing each file
+#     for file in files:
+#         # Reading all the the tab delimited files
+#         df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+    
+#         # Remove extra spaces from each column
+#         df=removeWhiteSpace(df,df.columns)
+#         input_count+=df.count()
+    
+#         # Creating a view from the dataframe to use it in the table query
+#         df.createOrReplaceTempView("DATA")
+#         output_count+=df.count()
+    
+#         # Execute the delta table query to insert
+#         [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|')
+#         spark.sql(upsertQuery)
+#         # Moving the files to archive layer
+#         #     for file in listfolder:
+#         archlist=dbutils.fs.ls(archivePath)
+#         l=[f for f in archlist if file.name in f.name]
+#         if not l:
+#           dbutils.fs.mv(landingPath+"/"+file.name,archivePath,True)
+#           print(landingPath+"/"+file.name)
+#         else:
+#           ts=datetime.now().strftime("_%H_%M_%S")
+#           dbutils.fs.mv(landingPath+"/"+file.name,archivePath+"/"+file.name[:-4]+ts+".tab",True)
+#           print(landingPath+"/"+file.name)  
+    
+  if deltaTableName=='dp_far_health':
+    df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+    
+    # Remove extra spaces from each column
+    df=removeWhiteSpace(df,df.columns)
+    input_count+=df.count()
+    
+    # Creating a view from the dataframe to use it in the table query
+    df.createOrReplaceTempView("DATA")
+    output_count+=df.count()
+    
+    # Execute the delta table query to insert
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery)  
+  elif deltaTableName=='rr_scorecard':
+    df=spark.read.format("csv").option("delimiter",";").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+    #display(df)
+    df=df.select('Report','Parameter','BU','Month','Month_Lag','REGION','SUB_REGION','COUNTRY','Data','Filtered_out')
+    df=df.withColumn("new_month",concat_ws('-',substring('Month',5,2),substring('Month',1,3)))
+    df=df.drop('month')
+    df=df.withColumnRenamed('new_month','month')
+    df = df.withColumn('data', regexp_replace('data', ',', '.'))
+    df = df.filter(df['Report'].isNotNull() & df['Parameter'].isNotNull() & df['BU'].isNotNull() & df['Month'].isNotNull() & df['Month_Lag'].isNotNull() & df['REGION'].isNotNull() & df['SUB_REGION'].isNotNull() & df['COUNTRY'].isNotNull() & df['Data'].isNotNull() & df['Filtered_out'].isNotNull())
+    display(df)
+    # Remove extra spaces from each column
+    df=removeWhiteSpace(df,df.columns)
+    input_count+=df.count()
+    
+    # Creating a view from the dataframe to use it in the table query
+    df.createOrReplaceTempView("DATA")
+    output_count+=df.count()
+    
+    # Execute the delta table query to insert
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery) 
+  elif deltaTableName=='rr_price_list':
+    df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+    df=df.withColumnRenamed("Sales_Org","salesorg").withColumnRenamed("Part_Site","dc").withColumnRenamed("Part_Name","global_item_number").withColumnRenamed("Part_Description","global_item_description").withColumnRenamed("Customer_L4_ID","customer_number").withColumnRenamed("Customer_Desc","customer_description").withColumnRenamed("Unit_Price","unit_price").withColumnRenamed("Effective_Date","effective_date").withColumnRenamed("Data_Source","data_source")
+
+    # Remove extra spaces from each column
+    df=removeWhiteSpace(df,df.columns)
+    input_count+=df.count()
+    
+    # Creating a view from the dataframe to use it in the table query
+    df.createOrReplaceTempView("DATA")
+    output_count+=df.count()
+    
+    # Execute the delta table query to insert
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery) 
+  elif deltaTableName=='rr_proc_scorecard':
+    df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+    
+    # Remove extra spaces from each column
+    df=removeWhiteSpace(df,df.columns)
+    input_count+=df.count()
+    
+    # Creating a view from the dataframe to use it in the table query
+    df.createOrReplaceTempView("DATA")
+    output_count+=df.count()
+    
+    # Execute the delta table query to insert
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery) 
+  elif deltaTableName=='rr_bill_of_material':
+    df=spark.read.format("csv").option("delimiter",",").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+    
+    # Remove extra spaces from each column
+    df=removeWhiteSpace(df,df.columns)
+    input_count+=df.count()
+    
+    # Creating a view from the dataframe to use it in the table query
+    df.createOrReplaceTempView("DATA")
+    output_count+=df.count()
+    
+    # Execute the delta table query to insert
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery) 
+  elif deltaTableName=='reason_code':
+    df=spark.read.format("csv").option("delimiter",",").option("header","true").option("multiline", "true").load(landingPath)
+    
+    # Remove extra spaces from each column
+    df=removeWhiteSpace(df,df.columns)
+    input_count+=df.count()
+    
+    # Creating a view from the dataframe to use it in the table query
+    df.createOrReplaceTempView("DATA")
+    output_count+=df.count()
+    
+    # Execute the delta table query to insert
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery)       
+  elif deltaTableName=='rr_composed_actuals' or deltaTableName=='rr_composed_forecast' or deltaTableName=='rr_decomposed_actuals' or deltaTableName=='rr_decomposed_forecast':
+    files=[]
+    for obj in listfolder:
+      if obj.path[-1] != '/':
+        files.append(obj) 
+    for file in files:
+      name=file.name
+      print(name)
+      if deltaTableName=='rr_composed_actuals':
+        #print(deltaTableName)
+        date=name[20:24]+'-'+name[24:26]+'-'+name[26:28]
+        #print(date)
+        df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+        df=df.withColumnRenamed("PART_NAME","global_item_number").withColumnRenamed("PART_SITE","dc").withColumnRenamed("CUSTOMER","customer_number")
+        df=df.withColumn("file_received_on",lit(date))
+        df.createOrReplaceTempView("temp")
+        df=spark.sql("""WIth cte_date (select * from temp),
+cte_chk (select *,case when(currday <> 1 and weeknum = 6) then date_add(file_Received_on,1) 
+else file_received_on
+end as file_Received_on1 from (select *, dayofmonth(file_Received_on) as currday,weekday(file_received_on) as weeknum from cte_date)),
+cte_final(select distinct global_item_number,dc,customer_number,salesorg,date,composed_Actuals,composed_actuals_value,currency,CAST(REPLACE(net_revenue, ',', '') AS INT) AS net_revenue,CAST(REPLACE(gross_margin, ',', '') AS INT) AS gross_margin, file_received_on1 as file_received_on from cte_chk)
+select * from cte_final
+ """)
+      elif deltaTableName=='rr_composed_forecast':  
+        #print(deltaTableName)
+        date=name[21:25]+'-'+name[25:27]+'-'+name[27:29]
+        #print(date)
+        df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+        df=df.withColumnRenamed("PART_NAME","global_item_number").withColumnRenamed("PART_SITE","dc").withColumnRenamed("CUSTOMER","customer_number")
+        df=df.withColumn("file_received_on",lit(date))
+      elif deltaTableName=='rr_decomposed_actuals':  
+        #print(deltaTableName)
+        date=name[22:26]+'-'+name[26:28]+'-'+name[28:30]
+        #print(date)
+        df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+        df=df.withColumnRenamed("PART_NAME","global_item_number").withColumnRenamed("PART_SITE","dc").withColumnRenamed("CUSTOMER","customer_number")
+        df=df.withColumn("file_received_on",lit(date))
+        df.createOrReplaceTempView("temp")
+        df=spark.sql("""WIth cte_date (select * from temp),
+cte_chk (select *,case when(currday <> 1 and weeknum = 6) then date_add(file_Received_on,1) 
+else file_received_on
+end as file_Received_on1 from (select *, dayofmonth(file_Received_on) as currday,weekday(file_received_on) as weeknum from cte_date)),
+cte_final(select distinct global_item_number,dc,customer_number,salesorg,date,decomposed_Actuals,decomposed_actuals_value,currency, CAST(REPLACE(net_revenue, ',', '') AS INT) AS net_revenue,CAST(REPLACE(gross_margin, ',', '') AS INT) AS gross_margin,file_received_on1 as file_received_on from cte_chk)
+select * from cte_final
+ """)  
+      elif deltaTableName=='rr_decomposed_forecast':  
+        #print(deltaTableName)
+        date=name[23:27]+'-'+name[27:29]+'-'+name[29:31]
+        #print(date)
+        df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+        df=df.withColumnRenamed("PART_NAME","global_item_number").withColumnRenamed("PART_SITE","dc").withColumnRenamed("CUSTOMER","customer_number") 
+        df=df.withColumn("file_received_on",lit(date))    
+        
+     # Remove extra spaces from each column
+      df=removeWhiteSpace(df,df.columns)
+      input_count+=df.count()
+    
+    # # Creating a view from the dataframe to use it in the table query
+      df.createOrReplaceTempView("DATA")
+      output_count+=df.count()
+     
+    
+    #Execute the delta table query to insert
+      [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+      spark.sql(upsertQuery)          
+  ################################# For all other tables we will process each file separately ####################################
+  elif deltaTableName=='dp_far_hygiene':
+    df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(landingPath)
+   
+    #Adding country_ID
+    loca_dim=spark.sql('select * from edap_transform.rr_location')
+    loca_dim=loca_dim.withColumnRenamed('country','country_id')
+    df=df.withColumn('country_key',regexp_replace(col("country_key"), " ", ""))
+    
+
+    df=df.withColumnRenamed('Plan_to_Group_Key','customer_number')
+    df=df.withColumnRenamed('Country_Key','salesorg')
+    df=df.withColumnRenamed('Location_Key','dc')
+    df=df.withColumnRenamed('Material_Key','global_item_number')
+    df = df.withColumn("year", year(current_date()))
+    df = df.withColumn("year", df.year.cast("string"))
+    
+    df=df.groupby('month','year','global_item_number','customer_number','dc','salesorg').agg(sum('Forecast_M0').alias('Forecast_M0'),sum('Forecast_M1').alias('Forecast_M1'),sum('Forecast_M2').alias('Forecast_M2'),sum('Final_Actuals').alias('Final_Actuals'))
+    
+    loca_dim=loca_dim.withColumn('location',regexp_replace(col("location"), " ", ""))
+    df=df.join(loca_dim.select('location','country_id'),on=[df.salesorg==loca_dim.location],how='left')
+
+    df=df.withColumnRenamed('Forecast_M0','M1_Forecast_qty')
+    df=df.withColumnRenamed('Forecast_M1','M2_Forecast_qty')
+    df=df.withColumnRenamed('Forecast_M2','M3_Forecast_qty')
+
+    df=df.withColumnRenamed('Final_Actuals','actual_qty')
+
+    #Adding Dummy data
+    df=df.withColumn('M4_Forecast_qty',lit(0))
+    df=df.withColumn('M5_Forecast_qty',lit(0))
+    df=df.withColumn('M6_Forecast_qty',lit(0))
+    df=df.withColumn('M1_forecast_value',lit(0))
+    df=df.withColumn('M2_forecast_value',lit(0))
+    df=df.withColumn('M3_forecast_value',lit(0))
+    df=df.withColumn('M4_forecast_value',lit(0))
+    df=df.withColumn('M5_forecast_value',lit(0))
+    df=df.withColumn('M6_forecast_value',lit(0))
+    df=df.withColumn('actual_value',lit(0))
+    df=df.withColumn('prev_yr_actual_qty',lit(0))
+    df=df.withColumn('prev_yr_actual_value',lit(0))
+
+    df=df.withColumn('sourcing_factory',lit(''))
+    df=df.withColumn('demand_planner',lit(''))
+    df=df.withColumn('channel',lit(''))
+    df=df.withColumn('lead_Time',lit(0))
+
+    df=df.withColumn('alternate_old_sku_code',lit(''))
+    df=df.withColumn('forecast_item',lit(''))
+    df=df.withColumn('segmentation',lit(''))
+    df=df.withColumn('M1_statistical_forecast_value',lit(0))
+    df=df.withColumn('M2_statistical_forecast_value',lit(0))
+    df=df.withColumn('M3_statistical_forecast_value',lit(0))
+    df=df.withColumn('M4_statistical_forecast_value',lit(0))
+    df=df.withColumn('M5_statistical_forecast_value',lit(0))
+    df=df.withColumn('M6_statistical_forecast_value',lit(0))
+    df=df.withColumn('M1_statistical_forecast_qty',lit(0))
+    df=df.withColumn('M2_statistical_forecast_qty',lit(0))
+    df=df.withColumn('M3_statistical_forecast_qty',lit(0))
+    df=df.withColumn('M4_statistical_forecast_qty',lit(0))
+    df=df.withColumn('M5_statistical_forecast_qty',lit(0))
+    df=df.withColumn('M6_statistical_forecast_qty',lit(0))
+
+    df=df.withColumn('M1_sop_approved_forecast_qty',lit(0))
+    df=df.withColumn('M2_sop_approved_forecast_qty',lit(0))
+    df=df.withColumn('M3_sop_approved_forecast_qty',lit(0))
+    df=df.withColumn('M4_sop_approved_forecast_qty',lit(0))
+    df=df.withColumn('M5_sop_approved_forecast_qty',lit(0))
+    df=df.withColumn('M6_sop_approved_forecast_qty',lit(0))
+    df=df.withColumn('M1_sop_approved_forecast_value',lit(0))
+    df=df.withColumn('M2_sop_approved_forecast_value',lit(0))
+    df=df.withColumn('M3_sop_approved_forecast_value',lit(0))
+    df=df.withColumn('M4_sop_approved_forecast_value',lit(0))
+    df=df.withColumn('M5_sop_approved_forecast_value',lit(0))
+    df=df.withColumn('M6_sop_approved_forecast_value',lit(0))
+    df=df.withColumn('M1_total_sales_plan_qty',lit(0))
+    df=df.withColumn('M2_total_sales_plan_qty',lit(0))
+    df=df.withColumn('M3_total_sales_plan_qty',lit(0))
+    df=df.withColumn('M4_total_sales_plan_qty',lit(0))
+    df=df.withColumn('M5_total_sales_plan_qty',lit(0))
+    df=df.withColumn('M6_total_sales_plan_qty',lit(0))
+    df=df.withColumn('M1_total_sales_plan_value',lit(0))
+    df=df.withColumn('M2_total_sales_plan_value',lit(0))
+    df=df.withColumn('M3_total_sales_plan_value',lit(0))
+    df=df.withColumn('M4_total_sales_plan_value',lit(0))
+    df=df.withColumn('M5_total_sales_plan_value',lit(0))
+    df=df.withColumn('M6_total_sales_plan_value',lit(0))
+    df=df.withColumn('M1_forecast_qty_cases',lit(0))
+    df=df.withColumn('M2_forecast_qty_cases',lit(0))
+    df=df.withColumn('M3_forecast_qty_cases',lit(0))
+    df=df.withColumn('M4_forecast_qty_cases',lit(0))
+    df=df.withColumn('M5_forecast_qty_cases',lit(0))
+    df=df.withColumn('M6_forecast_qty_cases',lit(0))
+    df=df.withColumn('M1_statistical_forecast_qty_cases',lit(0))
+    df=df.withColumn('M2_statistical_forecast_qty_cases',lit(0))
+    df=df.withColumn('M3_statistical_forecast_qty_cases',lit(0))
+    df=df.withColumn('M4_statistical_forecast_qty_cases',lit(0))
+    df=df.withColumn('M5_statistical_forecast_qty_cases',lit(0))
+    df=df.withColumn('M6_statistical_forecast_qty_cases',lit(0))
+    #Selecting required columns
+    df=df.select('month',
+ 'year',
+ 'global_item_number',
+ 'customer_number',
+ 'dc',
+ 'salesorg',
+ 'forecast_item',
+ 'alternate_old_sku_code',
+ 'sourcing_factory',
+ 'channel',
+ 'demand_planner',
+ 'lead_time',
+ 'segmentation',
+ 'country_id',
+ 'actual_qty',
+ 'actual_value',
+ 'prev_yr_actual_qty',
+ 'prev_yr_actual_value',
+ 'M1_forecast_qty',
+ 'M2_forecast_qty',
+ 'M3_forecast_qty',
+ 'M4_forecast_qty',
+ 'M5_forecast_qty',
+ 'M6_forecast_qty',
+ 'M1_forecast_value',
+ 'M2_forecast_value',
+ 'M3_forecast_value',
+ 'M4_forecast_value',
+ 'M5_forecast_value',
+ 'M6_forecast_value',
+ 'M1_statistical_forecast_qty',
+ 'M2_statistical_forecast_qty',
+ 'M3_statistical_forecast_qty',
+ 'M4_statistical_forecast_qty',
+ 'M5_statistical_forecast_qty',
+ 'M6_statistical_forecast_qty',
+ 'M1_statistical_forecast_value',
+ 'M2_statistical_forecast_value',
+ 'M3_statistical_forecast_value',
+ 'M4_statistical_forecast_value',
+ 'M5_statistical_forecast_value',
+ 'M6_statistical_forecast_value',
+ 'M1_sop_approved_forecast_qty',
+ 'M2_sop_approved_forecast_qty',
+ 'M3_sop_approved_forecast_qty',
+ 'M4_sop_approved_forecast_qty',
+ 'M5_sop_approved_forecast_qty',
+ 'M6_sop_approved_forecast_qty',
+ 'M1_sop_approved_forecast_value',
+ 'M2_sop_approved_forecast_value',
+ 'M3_sop_approved_forecast_value',
+ 'M4_sop_approved_forecast_value',
+ 'M5_sop_approved_forecast_value',
+ 'M6_sop_approved_forecast_value',
+ 'M1_total_sales_plan_qty',
+ 'M2_total_sales_plan_qty',
+ 'M3_total_sales_plan_qty',
+ 'M4_total_sales_plan_qty',
+ 'M5_total_sales_plan_qty',
+ 'M6_total_sales_plan_qty',
+ 'M1_total_sales_plan_value',
+ 'M2_total_sales_plan_value',
+ 'M3_total_sales_plan_value',
+ 'M4_total_sales_plan_value',
+ 'M5_total_sales_plan_value',
+ 'M6_total_sales_plan_value',
+ 'M1_forecast_qty_cases',
+ 'M2_forecast_qty_cases',
+ 'M3_forecast_qty_cases',
+ 'M4_forecast_qty_cases',
+ 'M5_forecast_qty_cases',
+ 'M6_forecast_qty_cases',
+ 'M1_statistical_forecast_qty_cases',
+ 'M2_statistical_forecast_qty_cases',
+ 'M3_statistical_forecast_qty_cases',
+ 'M4_statistical_forecast_qty_cases',
+ 'M5_statistical_forecast_qty_cases',
+ 'M6_statistical_forecast_qty_cases')
+    df.createOrReplaceTempView("DATA")
+
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery)     
+        
+  elif source == 'sharepoint/POS/Forecast':
+    landingPath = landingPath + '*.csv'
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+    Month = f"{current_year}{current_month:02d}"
+    deltaTableName = 'pos_forecast'
+
+    [truncateQuery] = truncate[deltaTableName].replace("\n"," ").replace("\t"," ").split('|')
+    spark.sql(truncateQuery)
+    
+    df = spark.read.format("csv").option("delimiter", ",").option("header", "true").option("multiline", "true").load(landingPath)
+    df=removeWhiteSpace(df,df.columns)
+    df = df.dropna(how='all')
+    df = df.withColumn("Customer", lpad(col("Customer").cast("string"), 10, '0'))
+    df = df.withColumnRenamed("PART_NAME", "Global_Item_Number").withColumnRenamed("Customer","Customer_number").withColumnRenamed("Day of Inventory","Day_of_Inventory").withColumnRenamed("Sell Out (Eaches)","Sell_Out_Eaches")
+    df = df.withColumn("Month", lit(Month))
+    df.createOrReplaceTempView("DATA")
+
+    # Execute the delta table query to insert
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery)
+
+  elif source == 'sharepoint/POS/Actuals':
+    landingPath = landingPath + '*.csv'
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+    Month = f"{current_year}{current_month:02d}"
+    deltaTableName = 'pos_actuals'
+
+    [truncateQuery] = truncate[deltaTableName].replace("\n"," ").replace("\t"," ").split('|')
+    spark.sql(truncateQuery)
+    
+    df = spark.read.format("csv").option("delimiter", ",").option("header", "true").option("multiline", "true").load(landingPath)
+    df=removeWhiteSpace(df,df.columns)
+    df = df.dropna(how='all')
+    df = df.withColumn("Customer", lpad(col("Customer").cast("string"), 10, '0'))
+    df = df.withColumnRenamed("PART_NAME", "Global_Item_Number").withColumnRenamed("Customer","Customer_number").withColumnRenamed("Day of Inventory","Day_of_Inventory").withColumnRenamed("Sell Out (Eaches)","Sell_Out_Eaches")
+    df = df.withColumn("Month", lit(Month))
+    df.createOrReplaceTempView("DATA")
+
+    # Execute the delta table query to insert
+    [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|') 
+    spark.sql(upsertQuery)
+
+  else:
+    # We will process only files and ignore folders
+    files=[]
+    for obj in listfolder:
+      if obj.path[-1] != '/':
+        if obj.size > 1:
+          files.append(obj)
+        
+    # Processing each file
+    for file in files:
+      # Reading the tab delimited file
+      df=spark.read.format("csv").option("delimiter","\t").option("header","true").option("escape", "\"").option("multiline", "true").load(file.path)
+      print(file.path)
+      # Remove extra spaces from each column
+      df=removeWhiteSpace(df,df.columns)
+      input_count+=df.count()
+        
+      # Creating a view from the dataframe to use it in the table query
+      df.createOrReplaceTempView("DATA")
+      # For "rr_dp_master_data" we need to remove duplicates
+      if deltaTableName == 'rr_dp_master_data':
+        data=spark.sql("""SELECT * FROM (SELECT ROW_NUMBER() OVER(PARTITION BY CONCAT(part_name, customer, dc, salesorg) ORDER BY lead_time) AS rownum, CONCAT(part_name, customer, dc, salesorg) AS f, * FROM DATA) WHERE rownum=1""")
+        data.createOrReplaceTempView("DATA")
+      output_count+=df.count()
+        
+      # Execute the delta table query to merge
+      [upsertQuery] = upsert[deltaTableName].replace("\n"," ").replace("\t"," ").split('|')
+      spark.sql(upsertQuery)
+
+  ######################################################################################################################################## 
+  
+  insertJobAuditDetail(pid, job_id, task_id, job_name, source_name, source_object, source_layer, target_layer, target_object, input_count, output_count, dropoff)
+  job_status='success'
+  message='end'
+
+except Exception as msg:
+  job_status='failed'
+  message=str(msg)
+  print(message)
+  sys.exit(message)
+finally:
+  update_push_down(job_status,message,pid)
+  SendEmailAlert(job_name,job_status,message,url,start_date,user,clusterId,notebook_path,jobTriggerType,target_layer)
