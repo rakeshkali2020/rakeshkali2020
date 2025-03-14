@@ -1,0 +1,190 @@
+Error:
+---------
+SystemExit: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column, variable, or function parameter with name `FD_LongTermAutoAdj_Quantity` cannot be resolved. Did you mean one of the following? [`FD_Regressor_Quantity`, `constraints_quantity`, `consumption_quantity`, `distribution_quantity`, `cannibalization_quantity`]. SQLSTATE: 42703; line 1 pos 1807;
+'InsertIntoStatement RelationV2[forward_measures_seondary_id#653957, dp_master_id#653958, product_id#653959, customer_id#653960, global_item_number#653961, dc#653962, customer_number#653963, salesorg#653964, date#653965, month#653966, timestamp#653967, product_uom#653968, demand_plan_quantity#653969, demand_plan_value#653970, primary_stat_forecast_quantity#653971, primary_stat_forecast_value#653972, seasonality_quantity#653973, seasonality_value#653974, customer_level_promotions_quantity#653975, customer_level_promotions_value#653976, manual_promotions_quantity#653977, manual_dp_adjustment_quantity#653978, manual_dp_adjustment_value#653979, proposed_demand_plan_quantity#653980, ... 57 more fields] hive_metastore.edap_transform.rr_dp_forward_looking_measures_secondary hive_metastore.edap_transform.rr_dp_forward_looking_measures_secondary, false, false, false
++- 'Project [forward_measures_secondary_id#586470, dp_master_id#586471, product_id#586472, customer_id#586473, global_item_number#586474, dc#586475, customer_number#586476, salesorg#586477, date#586478, month#586390, TIMESTAMP#586479, product_uom#586163, demand_plan_quantity#586480, demand_plan_value#587080L, primary_stat_forecast_quantity#586482, primary_stat_forecast_value#587081L, seasonality_quantity#586484, seasonality_value#587082L, customer_level_promotions_quantity#586486, customer_level_promotions_value#587083L, manual_promotions_quantity#586488, manual_dp_adjustment_quantity#586489, manual_dp_adjustment_value#587084L, proposed_demand_plan_quantity#586491, ... 57 more fields]
+   +- SubqueryAlias data
+      +- View (`DATA`, [forward_measures_secondary_id#586470, dp_master_id#586471, product_id#586472, customer_id#586473, global_item_number#586474, dc#586475, customer_number#586476, salesorg#586477, DATE#586478, month#586390, TIMESTAMP#586479, product_uom#586163, demand_plan_quantity#586480, demand_plan_value#587080L, primary_stat_forecast_quantity#586482, primary_stat_forecast_value#587081L, seasonality_quantity#586484, seasonality_value#587082L, customer_level_promotions_quantity#586486, customer_level_promotions_value#587083L, manual_promotions_quantity#586488, manual_dp_adjustment_quantity#586489, manual_dp_adjustment_value#587084L, proposed_demand_plan_quantity#586491, ... 56 more fields])
+         +- Distinct
+            +- Aggregate [forward_measures_secondary_id#586470, dp_master_id#586471, product_id#586472, customer_id#586473, global_item_number#586474, dc#586475, customer_number#586476, salesorg#586477, DATE#586478, month#586390, TIMESTAMP#586479, product_uom#586163, demand_plan_quantity#586480, primary_stat_forecast_quantity#586482, seasonality_quantity#586484, customer_level_promotions_quantity#586486, manual_promotions_quantity#586488, manual_dp_adjustment_quantity#586489, proposed_demand_plan_quantity#586491, sop_approved_forecast_quantity#586493, sales_planning_tool_promotions_quantity#586495, business_decision_quantity#586496, constraints_quantity#586498, media_quantity#586500, ... 27 more fields], [forward_measures_secondary_id#586470, dp_master_id#586471, product_id#586472, customer_id#586473, global_item_number#586474, dc#586475, customer_number#586476, salesorg#586477, DATE#586478, month#586390, TIMESTAMP#586479, product_uom#586163, demand_plan_quantity#586480, sum(demand_plan_value#587120) AS demand_plan_value#587080L, primary_stat_forecast_quantity#586482, sum(primary_stat_forecast_value#587121) AS primary_stat_forecast_value#587081L, seasonality_quantity#586484, sum(seasonality_value#587122) AS seasonality_value#587082L, customer_level_promotions_quantity#586486, sum(customer_level_promotions_value#587123) AS customer_level_promotions_value#587083L, manual_promotions_quantity#586488, manual_dp_adjustment_quantity#586489, sum(manual_dp_adjustment_value#587124) AS manual_dp_adjustment_value#587084L, proposed_demand_plan_quantity#586491, ... 56 more fields]
+               +- SubqueryAlias cte_value_trans
+                  +- SubqueryAlias cte_value_trans
+                     +- Distinct
+                        +- Project [forward_measures_secondary_id#586470, dp_master_id#586471, product_id#586472, customer_id#586473, global_item_number#586474, dc#586475, customer_number#586476, salesorg#586477, DATE#586478, month#586390, TIMESTAMP#586479, product_uom#586163, demand_plan_quantity#586480, cast(CASE WHEN (isnotnull(Unit_GS#587343) AND ((month#586390 >= NR_GM_effective_start_month#587113) AND (month#586390 = effective_start_month#587292) AND (month#586390 = NR_GM_effective_start_month#587113) AND (month#586390 = effective_start_month#587292) AND (month#586390 = NR_GM_effective_start_month#587113) AND (month#586390 = effective_start_month#587292) AND (month#586390 = NR_GM_effective_start_month#587113) AND (month#586390 = effective_start_month#587292) AND (month#586390 = NR_GM_effective_start_month#587113) AND (month#586390 = effective_start_month#587292) AND (month#586390 
+
+UPSERT QUERY
+---------------
+upsert["rr_dp_forward_looking_measures_secondary"] = """Insert into edap_transform.rr_dp_forward_looking_measures_secondary
+SELECT forward_measures_secondary_id
+	,dp_master_id
+	,product_id
+	,customer_id
+	,global_item_number
+	,dc
+	,customer_number
+  ,salesorg
+	,date
+  ,month
+  ,TIMESTAMP
+  ,product_uom
+	,demand_plan_quantity
+	,demand_plan_value
+	,primary_stat_forecast_quantity
+	,primary_stat_forecast_value
+	,seasonality_quantity
+	,seasonality_value
+	,customer_level_promotions_quantity
+	,customer_level_promotions_value
+	,manual_promotions_quantity
+	,manual_dp_adjustment_quantity
+	,manual_dp_adjustment_value
+	,proposed_demand_plan_quantity
+	,proposed_demand_plan_value
+	,sop_approved_forecast_quantity
+	,sop_approved_forecast_value
+	,sales_planning_tool_promotions_quantity
+  ,sales_planning_tool_promotions_value
+	,business_decision_quantity
+	,business_decision_value
+	,constraints_quantity
+	,constraints_value
+	,media_quantity
+	,media_value
+	,pricing_quantity
+	,pricing_value
+	,cannibalization_quantity
+	,cannibalization_value
+	,consumption_quantity
+	,consumption_value
+	,distribution_quantity
+	,distribution_value
+	,placeholders_quantity
+	,placeholders_value
+	,approved_promo_override
+	,fc1_quantity
+	,fc1_gross_sales
+	,fc2_quantity
+	,fc2_gross_sales
+	,fc3_quantity
+	,fc3_gross_sales
+	,pl_quantity
+	,pl_gross_sales
+    ,total_sales_plan_quantity
+    ,total_sales_plan_value
+    ,total_promo_quantity
+    ,total_promo_value
+    ,promobaseline_quantity
+    ,promobaseline_value
+    ,total_spt_quantity
+    ,total_spt_value
+    ,tof_quantity
+    ,tof_value
+    ,total_enrichment_quantity
+    ,total_enrichment_value
+    ,extrenaldemand_quantity
+    ,externaldemand_value
+    ,distributorprimary_quantity
+    ,distributorprimary_value
+	,CONSENSUS_DEMAND_PLAN_QUANTITY
+    ,CONSTRAINED_DEMAND_PLAN_QUANTITY
+	,FD_Regressor_Quantity
+    ,FD_Regressor_Revenue
+  ,FD_LongTermAutoAdj_Quantity
+	,source_nm
+	,update_run_ts
+	,create_user_id
+	,update_user_id
+	,dqaction
+	,dqmessage
+FROM DATA"""
+
+
+Table DDL
+------------
+spark.sql("""
+CREATE OR REPLACE TABLE edap_transform.rr_dp_forward_looking_measures_secondary (
+forward_measures_seondary_id string,
+dp_master_id string,
+product_id string,
+customer_id string,
+global_item_number string,
+dc string,
+customer_number string,
+salesorg string,
+date date,
+month string,
+timestamp timestamp,
+product_uom string,
+demand_plan_quantity integer,
+demand_plan_value integer,
+primary_stat_forecast_quantity integer,
+primary_stat_forecast_value integer,
+seasonality_quantity integer,
+seasonality_value integer,
+customer_level_promotions_quantity integer,
+customer_level_promotions_value integer,
+manual_promotions_quantity integer,
+manual_dp_adjustment_quantity integer,
+manual_dp_adjustment_value integer,
+proposed_demand_plan_quantity integer,
+proposed_demand_plan_value integer,
+sop_approved_forecast_quantity integer,
+sop_approved_forecast_value integer,
+sales_planning_tool_promotions_quantity integer,
+sales_planning_tool_promotions_value integer,
+business_decision_quantity integer,
+business_decision_value integer,
+constraints_quantity integer,
+constraints_value integer,
+media_quantity integer,
+media_value integer,
+pricing_quantity integer,
+pricing_value integer,
+cannibalization_quantity integer,
+cannibalization_value integer,
+consumption_quantity integer,
+consumption_value integer,
+distribution_quantity integer,
+distribution_value integer,
+placeholders_quantity integer,
+placeholders_value integer,
+approved_promo_override integer,
+fc1_quantity integer,
+fc1_gross_sales integer,
+fc2_quantity integer,
+fc2_gross_sales integer,
+fc3_quantity integer,
+fc3_gross_sales integer,
+pl_quantity integer,
+pl_gross_sales integer,
+total_sales_plan_quantity integer,
+total_sales_plan_value integer,
+total_promo_quantity integer,
+total_promo_value integer,
+promobaseline_quantity integer ,
+promobaseline_value integer,
+total_spt_quantity integer,
+total_spt_value integer,
+tof_quantity integer ,
+tof_value integer,
+total_enrichment_quantity  integer,
+total_enrichment_value integer,
+extrenaldemand_quantity integer,
+externaldemand_value integer,
+distributorprimary_quantity integer,
+distributorprimary_value integer,
+CONSENSUS_DEMAND_PLAN_QUANTITY integer ,
+CONSTRAINED_DEMAND_PLAN_QUANTITY integer,
+FD_Regressor_Quantity integer,
+FD_LongTermAutoAdj_Quantity integer,
+FD_Regressor_Revenue integer,
+source_nm string,
+update_run_ts timestamp,
+create_user_id string,
+update_user_id string,
+dqaction string,
+dqmessage string
+)
+using delta
+PARTITIONED BY (timestamp, month)
+location 'abfss://{0}@{1}.dfs.core.windows.net/050_transform/rr_dp_forward_looking_measures_secondary'""".format(rdContainer,rdStorageAccount))
