@@ -1,55 +1,252 @@
-The spark driver has stopped unexpectedly and is restarting. Your notebook will be automatically reattached.
-	at com.databricks.spark.chauffeur.Chauffeur.onDriverStateChange(Chauffeur.scala:1507)
-	at com.databricks.spark.chauffeur.Chauffeur.$anonfun$driverStateOpt$1(Chauffeur.scala:192)
-	at com.databricks.spark.chauffeur.Chauffeur.$anonfun$driverStateOpt$1$adapted(Chauffeur.scala:192)
-	at com.databricks.spark.chauffeur.DriverDaemonMonitorImpl.$anonfun$goToStopped$4(DriverDaemonMonitorImpl.scala:268)
-	at com.databricks.spark.chauffeur.DriverDaemonMonitorImpl.$anonfun$goToStopped$4$adapted(DriverDaemonMonitorImpl.scala:268)
-	at scala.collection.immutable.List.foreach(List.scala:431)
-	at com.databricks.spark.chauffeur.DriverDaemonMonitorImpl.goToStopped(DriverDaemonMonitorImpl.scala:268)
-	at com.databricks.spark.chauffeur.DriverDaemonMonitorImpl.monitorDriver(DriverDaemonMonitorImpl.scala:478)
-	at com.databricks.spark.chauffeur.DriverDaemonMonitorImpl.$anonfun$job$2(DriverDaemonMonitorImpl.scala:117)
-	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
-	at com.databricks.logging.UsageLogging.withAttributionContext(UsageLogging.scala:420)
-	at com.databricks.logging.UsageLogging.withAttributionContext$(UsageLogging.scala:418)
-	at com.databricks.spark.chauffeur.DriverDaemonMonitorImpl.withAttributionContext(DriverDaemonMonitorImpl.scala:75)
-	at com.databricks.logging.UsageLogging.withAttributionTags(UsageLogging.scala:472)
-	at com.databricks.logging.UsageLogging.withAttributionTags$(UsageLogging.scala:455)
-	at com.databricks.spark.chauffeur.DriverDaemonMonitorImpl.withAttributionTags(DriverDaemonMonitorImpl.scala:75)
-	at com.databricks.spark.chauffeur.DriverDaemonMonitorImpl.$anonfun$job$1(DriverDaemonMonitorImpl.scala:117)
-	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
-	at com.databricks.logging.UsageLogging.$anonfun$recordOperation$1(UsageLogging.scala:573)
-	at com.databricks.logging.UsageLogging.executeThunkAndCaptureResultTags$1(UsageLogging.scala:669)
-	at com.databricks.logging.UsageLogging.$anonfun$recordOperationWithResultTags$4(UsageLogging.scala:687)
-	at com.databricks.logging.UsageLogging.$anonfun$withAttributionContext$1(UsageLogging.scala:426)
-	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:62)
-	at com.databricks.logging.AttributionContext$.withValue(AttributionContext.scala:216)
-	at com.databricks.logging.UsageLogging.withAttributionContext(UsageLogging.scala:424)
-	at com.databricks.logging.UsageLogging.withAttributionContext$(UsageLogging.scala:418)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl.withAttributionContext(SingletonJob.scala:335)
-	at com.databricks.logging.UsageLogging.withAttributionTags(UsageLogging.scala:472)
-	at com.databricks.logging.UsageLogging.withAttributionTags$(UsageLogging.scala:455)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl.withAttributionTags(SingletonJob.scala:335)
-	at com.databricks.logging.UsageLogging.recordOperationWithResultTags(UsageLogging.scala:664)
-	at com.databricks.logging.UsageLogging.recordOperationWithResultTags$(UsageLogging.scala:582)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl.recordOperationWithResultTags(SingletonJob.scala:335)
-	at com.databricks.logging.UsageLogging.recordOperation(UsageLogging.scala:573)
-	at com.databricks.logging.UsageLogging.recordOperation$(UsageLogging.scala:542)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl.recordOperation(SingletonJob.scala:335)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl$SingletonRun.$anonfun$run$4(SingletonJob.scala:395)
-	at com.databricks.logging.UsageLogging.$anonfun$withAttributionContext$1(UsageLogging.scala:426)
-	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:62)
-	at com.databricks.logging.AttributionContext$.withValue(AttributionContext.scala:216)
-	at com.databricks.logging.UsageLogging.withAttributionContext(UsageLogging.scala:424)
-	at com.databricks.logging.UsageLogging.withAttributionContext$(UsageLogging.scala:418)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl.withAttributionContext(SingletonJob.scala:335)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl$SingletonRun.$anonfun$run$3(SingletonJob.scala:394)
-	at scala.util.Try$.apply(Try.scala:213)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl$SingletonRun.$anonfun$run$1(SingletonJob.scala:393)
-	at com.databricks.util.UntrustedUtils$.tryLog(UntrustedUtils.scala:109)
-	at com.databricks.threading.SingletonJob$SingletonJobImpl$SingletonRun.run(SingletonJob.scala:387)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
-	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+       df.createOrReplaceTempView("DATA")
+    # ---------updating/inserting the modified and new data----------------------
+        print("Merge starts")
+        df=spark.sql(""" Merge into """+transform+""" trgt using
+(select * from DATA where concat(global_item_number,dc,salesorg,customer_number) in (select distinct 
+concat(global_item_number,dc,salesorg,customer_number) from union) and to_Date(timestamp)='"""+min_date+"""') src
+on 
+trgt.global_item_number = src.global_item_number
+and trgt.dc = src.dc
+and trgt.customer_number = src.customer_number
+and trgt.salesorg = src.salesorg
+and trgt.date = src.date
+and to_date(trgt.timestamp)='"""+min_date+"""'
+when matched
+then update set
+trgt.demand_plan_quantity = src.demand_plan_quantity
+,trgt.demand_plan_value = src.demand_plan_value
+,trgt.primary_stat_forecast_quantity = src.primary_stat_forecast_quantity
+,trgt.primary_stat_forecast_value = src.primary_stat_forecast_value
+,trgt.seasonality_quantity = src.seasonality_quantity
+,trgt.seasonality_value = src.seasonality_value
+,trgt.customer_level_promotions_quantity = src.customer_level_promotions_quantity
+,trgt.customer_level_promotions_value = src.customer_level_promotions_value
+,trgt.manual_promotions_quantity = src.manual_promotions_quantity
+,trgt.manual_dp_adjustment_quantity = src.manual_dp_adjustment_quantity
+,trgt.manual_dp_adjustment_value = src.manual_dp_adjustment_value
+,trgt.proposed_demand_plan_quantity = src.proposed_demand_plan_quantity
+,trgt.proposed_demand_plan_value = src.proposed_demand_plan_value
+,trgt.sop_approved_forecast_quantity = src.sop_approved_forecast_quantity
+,trgt.sop_approved_forecast_value = src.sop_approved_forecast_value
+,trgt.sales_planning_tool_promotions_quantity = src.sales_planning_tool_promotions_quantity
+,trgt.sales_planning_tool_promotions_value = src.sales_planning_tool_promotions_value
+,trgt.business_decision_quantity = src.business_decision_quantity
+,trgt.business_decision_value = src.business_decision_value
+,trgt.constraints_quantity = src.constraints_quantity
+,trgt.constraints_value = src.constraints_value
+,trgt.media_quantity = src.media_quantity
+,trgt.media_value = src.media_value
+,trgt.pricing_quantity = src.pricing_quantity
+,trgt.pricing_value = src.pricing_value
+,trgt.cannibalization_quantity = src.cannibalization_quantity
+,trgt.cannibalization_value = src.cannibalization_value
+,trgt.consumption_quantity = src.consumption_quantity
+,trgt.consumption_value = src.consumption_value
+,trgt.distribution_quantity = src.distribution_quantity
+,trgt.distribution_value = src.distribution_value
+,trgt.placeholders_quantity = src.placeholders_quantity
+,trgt.placeholders_value = src.placeholders_value
+,trgt.approved_promo_override = src.approved_promo_override
+,trgt.fc1_quantity = src.fc1_quantity
+,trgt.fc1_gross_sales = src.fc1_gross_sales
+,trgt.fc2_quantity = src.fc2_quantity
+,trgt.fc2_gross_sales = src.fc2_gross_sales
+,trgt.fc3_quantity = src.fc3_quantity
+,trgt.fc3_gross_sales = src.fc3_gross_sales
+,trgt.pl_quantity = src.pl_quantity
+,trgt.pl_gross_sales = src.pl_gross_sales
+,trgt.total_sales_plan_quantity = src.total_sales_plan_quantity
+,trgt.total_sales_plan_value = src.total_sales_plan_value
+,trgt.total_promo_quantity = src.total_promo_quantity
+,trgt.total_promo_value = src.total_promo_value
+,trgt.promobaseline_quantity=src.promobaseline_quantity
+,trgt.promobaseline_value=src.promobaseline_value
+,trgt.total_spt_quantity=src.total_spt_quantity
+,trgt.total_spt_value=src.total_spt_value
+,trgt.tof_quantity=src.tof_quantity
+,trgt.tof_value=src.tof_value
+,trgt.extrenaldemand_quantity=src.extrenaldemand_quantity
+,trgt.externaldemand_value=src.externaldemand_value
+,trgt.distributorprimary_quantity=src.distributorprimary_quantity
+,trgt.distributorprimary_value=src.distributorprimary_value
+,trgt.CONSENSUS_DEMAND_PLAN_QUANTITY=src.CONSENSUS_DEMAND_PLAN_QUANTITY
+,trgt.CONSENSUS_DEMAND_PLAN_VALUE=src.CONSENSUS_DEMAND_PLAN_VALUE
+,trgt.CONSTRAINED_DEMAND_PLAN_QUANTITY=src.CONSTRAINED_DEMAND_PLAN_QUANTITY
+,trgt.CONSTRAINED_DEMAND_PLAN_VALUE=src.CONSTRAINED_DEMAND_PLAN_VALUE
+,trgt.FD_REGRESSOR_QUANTITY=src.FD_REGRESSOR_QUANTITY
+,trgt.FD_REGRESSOR_REVENUE=src.FD_REGRESSOR_REVENUE
+,trgt.FD_LONGTERMAUTOADJ_QUANTITY=src.FD_LONGTERMAUTOADJ_QUANTITY
+,trgt.update_run_ts=src.update_run_ts
+when not matched then
+insert
+(forward_measures_id
+	,dp_master_id
+	,product_id
+	,customer_id
+	,global_item_number
+	,dc
+	,customer_number
+    ,salesorg
+	,date
+ 	,technical_week
+	,week
+	,month
+	,timestamp
+	,product_uom
+	,region
+	,demand_plan_quantity
+	,demand_plan_value
+	,primary_stat_forecast_quantity
+	,primary_stat_forecast_value
+	,seasonality_quantity
+	,seasonality_value
+	,customer_level_promotions_quantity
+	,customer_level_promotions_value
+	,manual_promotions_quantity
+	,manual_dp_adjustment_quantity
+	,manual_dp_adjustment_value
+	,proposed_demand_plan_quantity
+	,proposed_demand_plan_value
+	,sop_approved_forecast_quantity
+	,sop_approved_forecast_value
+	,sales_planning_tool_promotions_quantity
+	,sales_planning_tool_promotions_value
+	,business_decision_quantity
+	,business_decision_value
+	,constraints_quantity
+	,constraints_value
+	,media_quantity
+	,media_value
+	,pricing_quantity
+	,pricing_value
+	,cannibalization_quantity
+	,cannibalization_value
+	,consumption_quantity
+	,consumption_value
+	,distribution_quantity
+	,distribution_value
+	,placeholders_quantity
+	,placeholders_value
+	,approved_promo_override
+	,fc1_quantity
+	,fc1_gross_sales
+	,fc2_quantity
+	,fc2_gross_sales
+	,fc3_quantity
+	,fc3_gross_sales
+	,pl_quantity
+	,pl_gross_sales
+    ,total_sales_plan_quantity
+    ,total_sales_plan_value
+    ,total_promo_quantity
+    ,total_promo_value
+    ,promobaseline_quantity
+    ,promobaseline_value
+    ,total_spt_quantity
+    ,total_spt_value
+    ,tof_quantity
+    ,tof_value
+    ,extrenaldemand_quantity
+    ,externaldemand_value
+    ,distributorprimary_quantity
+    ,distributorprimary_value
+		,CONSENSUS_DEMAND_PLAN_QUANTITY
+		,CONSENSUS_DEMAND_PLAN_VALUE
+    ,CONSTRAINED_DEMAND_PLAN_QUANTITY
+    ,CONSTRAINED_DEMAND_PLAN_VALUE
+	  ,FD_REGRESSOR_QUANTITY
+	  ,FD_REGRESSOR_REVENUE
+    ,FD_LONGTERMAUTOADJ_QUANTITY
+	,source_nm
+	,update_run_ts
+	,create_user_id
+	,update_user_id
+	,dqaction
+	,dqmessage)
+ VALUES
+ (src.forward_measures_id
+ ,src.dp_master_id
+	,src.product_id
+	,src.customer_id
+	,src.global_item_number
+	,src.dc
+	,src.customer_number
+    ,src.salesorg
+	,src.date
+	,src.technical_week
+	,src.week
+	,src.month
+	,'"""+min_date+"""'
+	,src.product_uom
+	,src.region
+	,src.demand_plan_quantity
+	,src.demand_plan_value
+	,src.primary_stat_forecast_quantity
+	,src.primary_stat_forecast_value
+	,src.seasonality_quantity
+	,src.seasonality_value
+	,src.customer_level_promotions_quantity
+	,src.customer_level_promotions_value
+	,src.manual_promotions_quantity
+	,src.manual_dp_adjustment_quantity
+	,src.manual_dp_adjustment_value
+	,src.proposed_demand_plan_quantity
+	,src.proposed_demand_plan_value
+	,src.sop_approved_forecast_quantity
+	,src.sop_approved_forecast_value
+	,src.sales_planning_tool_promotions_quantity
+	,src.sales_planning_tool_promotions_value
+	,src.business_decision_quantity
+	,src.business_decision_value
+	,src.constraints_quantity
+	,src.constraints_value
+	,src.media_quantity
+	,src.media_value
+	,src.pricing_quantity
+	,src.pricing_value
+	,src.cannibalization_quantity
+	,src.cannibalization_value
+	,src.consumption_quantity
+	,src.consumption_value
+	,src.distribution_quantity
+	,src.distribution_value
+	,src.placeholders_quantity
+	,src.placeholders_value
+	,src.approved_promo_override
+	,src.fc1_quantity
+	,src.fc1_gross_sales
+	,src.fc2_quantity
+	,src.fc2_gross_sales
+	,src.fc3_quantity
+	,src.fc3_gross_sales
+	,src.pl_quantity
+	,src.pl_gross_sales
+    ,src.total_sales_plan_quantity
+    ,src.total_sales_plan_value
+    ,src.total_promo_quantity
+    ,src.total_promo_value
+    ,src.promobaseline_quantity
+    ,src.promobaseline_value
+    ,src.total_spt_quantity
+    ,src.total_spt_value
+    ,src.tof_quantity
+    ,src.tof_value
+    ,src.extrenaldemand_quantity
+    ,src.externaldemand_value
+    ,src.distributorprimary_quantity
+    ,src.distributorprimary_value
+	,src.CONSENSUS_DEMAND_PLAN_QUANTITY
+	,src.CONSENSUS_DEMAND_PLAN_VALUE
+    ,src.CONSTRAINED_DEMAND_PLAN_QUANTITY
+    ,src.CONSTRAINED_DEMAND_PLAN_VALUE
+    ,src.FD_REGRESSOR_QUANTITY
+	,src.FD_REGRESSOR_REVENUE
+    ,src.FD_LONGTERMAUTOADJ_QUANTITY
+	,src.source_nm
+	,src.update_run_ts
+	,src.create_user_id
+	,src.update_user_id
+	,src.dqaction
+	,src.dqmessage
+)
+""")
