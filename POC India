@@ -1,0 +1,17 @@
+pivotdf =spark.sql(""" select dim.line_of_business_description, dim.brand_desc,dim.PG1,dim.PG2,dim.PG3,dim.PG4,substring(month,3,2) as year,case when substring(month,5,2)='01' then 'JANUARY' 
+                                          when substring(month,5,2) ='02' then 'FEBRUARY' 
+                                          when substring(month,5,2) ='03' then 'MARCH' 
+                                          when substring(month,5,2) ='04' then 'APRIL'
+                                          when substring(month,5,2)='05' then 'MAY' 
+                                          when substring(month,5,2) ='06' then 'JUNE' 
+                                          when substring(month,5,2) ='07' then 'JULY' 
+                                          when substring(month,5,2) ='08' then 'AUGUST'
+                                          when substring(month,5,2)='09' then 'SEPTEMBER' 
+                                          when substring(month,5,2) ='10' then 'OCTOBER' 
+                                          when substring(month,5,2) ='11' then 'NOVEMBER' 
+                                          when substring(month,5,2) ='12' then 'DECEMBER'
+                                        end as calender_month,tof_quantity, PDP_comp_quantity_cases, PDP_comp_value_usd from edap_transform.fa_monthly_snapshot_fct fct 
+inner join edap_sa.sa_product_dim dim on fct.global_item_number=dim.product 
+where 
+--dim.brand_desc='Airwick' and 
+fct.month >='202301' and fct.month<='202302'""")
