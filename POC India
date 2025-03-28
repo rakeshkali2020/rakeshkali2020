@@ -1,5 +1,5 @@
 pivotdf = spark.sql("""
-    SELECT dim.line_of_business_description, dim.brand_desc, dim.PG1, dim.PG2, dim.PG3, dim.PG4, 
+    SELECT dim.brand_desc, dim.PG1, dim.PG2, dim.PG3, dim.PG4, 
            substring(month,3,2) AS year, 
            CASE 
                WHEN substring(month,5,2)='01' THEN 'JANUARY' 
@@ -14,11 +14,70 @@ pivotdf = spark.sql("""
                WHEN substring(month,5,2)='10' THEN 'OCTOBER' 
                WHEN substring(month,5,2)='11' THEN 'NOVEMBER' 
                WHEN substring(month,5,2)='12' THEN 'DECEMBER'
-           END AS calender_month, 
-           cust.customer_id, 
+           END AS calender_month,            
            tof_quantity, PDP_comp_quantity_cases, PDP_comp_value_usd 
     FROM edap_transform.fa_monthly_snapshot_fct fct 
     INNER JOIN edap_sa.sa_product_dim dim ON fct.global_item_number = dim.product 
-    INNER JOIN edap_sa.sa_customer_hierarchy cust ON fct.customer_key = cust.customer_key 
     WHERE fct.month >= '202301' AND fct.month <= '202302'
 """)
+
+
+
+from pyspark.sql.functions import concat,col, lit
+pivotdf=pivotdf.select("brand_desc","LCG2_CG2", "PG1","PG2","PG3","PG4" ,"year", "calender_month", "tof_quantity", "PDP_comp_quantity_cases", "PDP_comp_value_usd",concat(col("calender_month"), lit("'"), col("year")).alias("month"))
+pivotdf=pivotdf.drop("year", "calender_month")
+
+
+from pyspark.sql import functions as F
+
+# Perform the aggregation 
+agg_df = pivotdf.groupBy("brand_desc","LCG2_CG2","PG1","PG2","PG3","PG4", "month").agg(
+    F.sum("tof_quantity").cast("DECIMAL(38,3)").alias("tof_quantity"),
+    F.sum("PDP_comp_quantity_cases").cast("DECIMAL(38,3)").alias("PDP_comp_quantity_cases"),
+    F.sum("PDP_comp_value_usd").alias("PDP_comp_value_usd")
+)
+
+# Use selectExpr on the aggregated DataFrame
+result_df = agg_df.selectExpr(
+    "brand_desc",
+    "LCG2_CG2",
+    "month", "PG1","PG2","PG3","PG4", 
+    "stack(3, 'tof_quantity', tof_quantity, 'PDP_comp_quantity_cases', PDP_comp_quantity_cases, 'PDP_comp_value_usd', PDP_comp_value_usd) as (`KEY FIGURES`, Total)"
+).where("Total is not null")
+
+# Display the result
+# result_df.groupBy("brand_desc","PG1","PG2","PG3","PG4","KEY FIGURES").pivot("month").agg(F.sum("Total")).orderBy("brand_desc","KEY FIGURES").display()
+df=result_df.groupBy("brand_desc","LCG2_CG2","PG1","PG2","PG3","PG4","KEY FIGURES").pivot("month").agg(F.sum("Total")).orderBy("brand_desc","PG1","PG2","PG3","PG4","KEY FIGURES")
+
+
+
+df.createOrReplaceTempView('ibp_view')
+
+
+# convert column names to a list
+cols_list = df.columns
+print(cols_list)
+
+
+from datetime import datetime
+r=[]
+str='`'
+final_str='`brand_desc`, `LCG2_CG2`, `PG1`, `PG2`, `PG3`,`PG4`, `KEY FIGURES`'
+for row in cols_list:
+    if row not in ("brand_desc", "LCG2_CG2", "PG1", "PG2", "PG3", "PG4", "KEY FIGURES"):
+        row = row.replace("'", "-")+"-01"
+        # row = row + "-01"
+        date_value = datetime.strptime(row, '%B-%y-%d')  # Corrected the format
+        date_value=date_value.strftime('%B\'%y')
+        r.append(date_value)
+r.sort(key=lambda x: datetime.strptime(x, '%B\'%y'))
+for i in r:
+    str=str+i.upper()+"`,`"
+# print(str)
+str=str[:-2]
+final_str=final_str+","+str
+print(str)
+print(final_str)
+
+
+df_final=spark.sql("select "+final_str+" from ibp_view")
